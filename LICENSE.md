@@ -1,0 +1,8 @@
+Copyright (c) 2026 Loïc Pessonnier
+
+All Rights Reserved.
+
+No permission is granted to use, copy, modify, merge,
+publish, distribute, sublicense, or sell copies of this
+software or its documentation without prior written
+authorization from the copyright holder.
