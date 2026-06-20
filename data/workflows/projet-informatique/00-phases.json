@@ -1,0 +1,127 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Phase_Cadrage_budgetisation",
+      "workflow_id": "Phases_projet_informatique",
+      "nom": "1. Cadrage et programmation budgétaire",
+      "description": "<p>La personne publique ou l'organisation qualifie le besoin, vérifie son alignement stratégique, organise la gouvernance et sécurise les crédits nécessaires.</p>",
+      "type_etat": "initial",
+      "ordre": 10,
+      "type_lien": "page_phase",
+      "cible_lien": "phases/01-cadrage-budgetisation.html",
+      "libelle_lien": "Ouvrir la phase de cadrage et budget"
+    },
+    {
+      "etat_id": "Phase_Conception_commande",
+      "workflow_id": "Phases_projet_informatique",
+      "nom": "2. Conception et commande publique",
+      "description": "<p>Les besoins et exigences sont stabilisés, l'architecture est instruite et, lorsqu'un achat est nécessaire, la consultation et le marché sont préparés puis attribués.</p>",
+      "type_etat": "normal",
+      "ordre": 20,
+      "type_lien": "page_phase",
+      "cible_lien": "phases/02-specifications-conception-marche.html",
+      "libelle_lien": "Ouvrir la phase de conception et marché"
+    },
+    {
+      "etat_id": "Phase_Realisation_qualification",
+      "workflow_id": "Phases_projet_informatique",
+      "nom": "3. Réalisation et qualification",
+      "description": "<p>La solution est réalisée, contrôlée, testée, réceptionnée par les métiers et soumise aux validations de sécurité requises.</p>",
+      "type_etat": "normal",
+      "ordre": 30,
+      "type_lien": "page_phase",
+      "cible_lien": "phases/03-realisation-qualification.html",
+      "libelle_lien": "Ouvrir la phase de réalisation et qualification"
+    },
+    {
+      "etat_id": "Phase_Mise_en_service",
+      "workflow_id": "Phases_projet_informatique",
+      "nom": "4. Mise en service",
+      "description": "<p>Le changement est préparé, autorisé, répété puis exécuté avec retour arrière, contrôles post-déploiement et transfert vers l'exploitation.</p>",
+      "type_etat": "validation",
+      "ordre": 40,
+      "type_lien": "page_phase",
+      "cible_lien": "phases/04-mise-en-production.html",
+      "libelle_lien": "Ouvrir la phase de mise en service"
+    },
+    {
+      "etat_id": "Phase_Exploitation_maintenance",
+      "workflow_id": "Phases_projet_informatique",
+      "nom": "5. Exploitation et maintenance",
+      "description": "<p>Le service est exploité, maintenu, sécurisé et piloté jusqu'à la décision formelle de fin de vie.</p>",
+      "type_etat": "normal",
+      "ordre": 50,
+      "type_lien": "page_phase",
+      "cible_lien": "phases/05-maintenance.html",
+      "libelle_lien": "Ouvrir la phase d'exploitation et maintenance"
+    },
+    {
+      "etat_id": "Phase_Decommissionnement",
+      "workflow_id": "Phases_projet_informatique",
+      "nom": "6. Décommissionnement",
+      "description": "<p>Les données, services, contrats et actifs sont retirés de façon contrôlée, avec mise à jour des inventaires et conservation des preuves.</p>",
+      "type_etat": "final",
+      "ordre": 60,
+      "type_lien": "page_phase",
+      "cible_lien": "phases/06-decommissionnement.html",
+      "libelle_lien": "Ouvrir la phase de décommissionnement"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Passage_conception_commande",
+      "workflow_id": "Phases_projet_informatique",
+      "etat_source_id": "Phase_Cadrage_budgetisation",
+      "etat_cible_id": "Phase_Conception_commande",
+      "libelle": "opportunité et crédits validés",
+      "type_lien": "page_phase",
+      "cible_lien": "phases/02-specifications-conception-marche.html",
+      "libelle_lien": "Accéder à la phase de conception",
+      "actif": true
+    },
+    {
+      "transition_id": "Passage_realisation",
+      "workflow_id": "Phases_projet_informatique",
+      "etat_source_id": "Phase_Conception_commande",
+      "etat_cible_id": "Phase_Realisation_qualification",
+      "libelle": "conception approuvée et marché disponible",
+      "type_lien": "page_phase",
+      "cible_lien": "phases/03-realisation-qualification.html",
+      "libelle_lien": "Accéder à la phase de réalisation",
+      "actif": true
+    },
+    {
+      "transition_id": "Passage_mise_service",
+      "workflow_id": "Phases_projet_informatique",
+      "etat_source_id": "Phase_Realisation_qualification",
+      "etat_cible_id": "Phase_Mise_en_service",
+      "libelle": "recette et homologation obtenues",
+      "type_lien": "page_phase",
+      "cible_lien": "phases/04-mise-en-production.html",
+      "libelle_lien": "Accéder à la phase de mise en service",
+      "actif": true
+    },
+    {
+      "transition_id": "Passage_exploitation",
+      "workflow_id": "Phases_projet_informatique",
+      "etat_source_id": "Phase_Mise_en_service",
+      "etat_cible_id": "Phase_Exploitation_maintenance",
+      "libelle": "service ouvert et transféré",
+      "type_lien": "page_phase",
+      "cible_lien": "phases/05-maintenance.html",
+      "libelle_lien": "Accéder à la phase d'exploitation",
+      "actif": true
+    },
+    {
+      "transition_id": "Passage_decommissionnement",
+      "workflow_id": "Phases_projet_informatique",
+      "etat_source_id": "Phase_Exploitation_maintenance",
+      "etat_cible_id": "Phase_Decommissionnement",
+      "libelle": "fin de vie décidée",
+      "type_lien": "page_phase",
+      "cible_lien": "phases/06-decommissionnement.html",
+      "libelle_lien": "Accéder à la phase de décommissionnement",
+      "actif": true
+    }
+  ]
+}

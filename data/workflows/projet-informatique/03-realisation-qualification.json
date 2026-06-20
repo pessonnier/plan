@@ -1,0 +1,168 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Realisation",
+      "workflow_id": "Projet_informatique",
+      "nom": "Réalisation en cours",
+      "description": "<p>La solution est développée ou configurée avec gestion de versions, revues, intégration continue et traçabilité des changements.</p>",
+      "type_etat": "normal",
+      "ordre": 130,
+      "contenu": "<p>Les livraisons doivent être reproductibles et associées à une version.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Revue_code",
+      "workflow_id": "Projet_informatique",
+      "nom": "Revue technique validée",
+      "description": "<p>Les revues de code, analyses de dépendances, contrôles de secrets et critères qualité ont atteint les seuils définis.</p>",
+      "type_etat": "validation",
+      "ordre": 140,
+      "contenu": "<p>Les anomalies critiques sont corrigées ou formellement acceptées.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Tests_integration",
+      "workflow_id": "Projet_informatique",
+      "nom": "Tests d'intégration",
+      "description": "<p>Les interfaces, migrations, performances, sauvegardes et scénarios de reprise sont vérifiés dans un environnement contrôlé.</p>",
+      "type_etat": "normal",
+      "ordre": 150,
+      "contenu": "<p>Les résultats de tests et anomalies sont conservés comme preuves.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Recette_metier",
+      "workflow_id": "Projet_informatique",
+      "nom": "Recette métier",
+      "description": "<p>Les utilisateurs habilités exécutent les scénarios d'acceptation et vérifient l'adéquation aux exigences validées.</p>",
+      "type_etat": "validation",
+      "ordre": 160,
+      "contenu": "<p>Le procès-verbal de recette liste les réserves et leurs échéances.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Homologation_securite",
+      "workflow_id": "Projet_informatique",
+      "nom": "Homologation de sécurité",
+      "description": "<p>Les risques résiduels, tests de sécurité, mesures de protection et responsabilités sont examinés par l'autorité compétente.</p>",
+      "type_etat": "validation",
+      "ordre": 170,
+      "contenu": "<p>Aucune mise en production n'est autorisée sans décision de sécurité applicable.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Pret_pour_MEP",
+      "workflow_id": "Projet_informatique",
+      "nom": "Prêt pour mise en production",
+      "description": "<p>Les validations fonctionnelles, techniques, sécurité et documentaires sont réunies pour préparer le changement.</p>",
+      "type_etat": "validation",
+      "ordre": 180,
+      "contenu": "<p>Les réserves restantes sont non bloquantes, attribuées et planifiées.</p>",
+      "type_contenu": "html",
+      "type_lien": "page_phase",
+      "cible_lien": "phases/04-mise-en-production.html",
+      "libelle_lien": "Poursuivre vers la mise en service"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Lancer_realisation_marche",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Marche_attribue",
+      "etat_cible_id": "Realisation",
+      "libelle": "réalisation engagée",
+      "condition": "Contrat notifié et environnement projet disponible.",
+      "role_autorise": "Chef_projet",
+      "action_associee": "Autoriser le démarrage de la réalisation.",
+      "actif": true
+    },
+    {
+      "transition_id": "Valider_revue_code",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Realisation",
+      "etat_cible_id": "Revue_code",
+      "libelle": "qualité technique conforme",
+      "condition": "Seuils qualité et sécurité atteints.",
+      "role_autorise": "Equipe_dev",
+      "action_associee": "Promouvoir la version candidate.",
+      "actif": true
+    },
+    {
+      "transition_id": "Tester_integration",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Revue_code",
+      "etat_cible_id": "Tests_integration",
+      "libelle": "version intégrée",
+      "condition": "Artefacts signés et déployables.",
+      "role_autorise": "Qualite",
+      "action_associee": "Exécuter le plan de tests.",
+      "actif": true
+    },
+    {
+      "transition_id": "Corriger_apres_tests",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Tests_integration",
+      "etat_cible_id": "Realisation",
+      "libelle": "anomalies bloquantes",
+      "condition": "Au moins une anomalie critique ou majeure non acceptée.",
+      "role_autorise": "Qualite",
+      "action_associee": "Retourner la version en correction.",
+      "actif": true
+    },
+    {
+      "transition_id": "Ouvrir_recette",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Tests_integration",
+      "etat_cible_id": "Recette_metier",
+      "libelle": "tests techniques réussis",
+      "condition": "Aucune anomalie technique bloquante.",
+      "role_autorise": "Qualite",
+      "action_associee": "Mettre la version à disposition du métier.",
+      "actif": true
+    },
+    {
+      "transition_id": "Demander_homologation",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Recette_metier",
+      "etat_cible_id": "Homologation_securite",
+      "libelle": "recette prononcée",
+      "condition": "Procès-verbal de recette signé.",
+      "role_autorise": "Metier",
+      "action_associee": "Soumettre le dossier de sécurité final.",
+      "actif": true
+    },
+    {
+      "transition_id": "Declarer_pret_MEP",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Homologation_securite",
+      "etat_cible_id": "Pret_pour_MEP",
+      "libelle": "homologation accordée",
+      "condition": "Décision de sécurité valide et risques résiduels acceptés.",
+      "role_autorise": "Securite",
+      "action_associee": "Autoriser la préparation du changement.",
+      "actif": true
+    }
+  ],
+  "Regle": [
+    {
+      "regle_id": "R_Qualite_logicielle",
+      "workflow_id": "Projet_informatique",
+      "transition_id": "Valider_revue_code",
+      "etat_id": "Realisation",
+      "nom": "Barrière de qualité logicielle",
+      "expression": "Tests unitaires réussis ET aucune vulnérabilité critique ET aucun secret détecté",
+      "message_erreur": "La version ne respecte pas les seuils qualité et sécurité.",
+      "bloquante": true
+    },
+    {
+      "regle_id": "R_Homologation_valide",
+      "workflow_id": "Projet_informatique",
+      "transition_id": "Declarer_pret_MEP",
+      "etat_id": "Homologation_securite",
+      "nom": "Décision de sécurité applicable",
+      "expression": "Homologation signée ET date d'expiration postérieure à la mise en production",
+      "message_erreur": "Une homologation valide est obligatoire.",
+      "bloquante": true
+    }
+  ]
+}

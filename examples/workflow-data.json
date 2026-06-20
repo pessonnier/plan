@@ -1,0 +1,110 @@
+{
+  "Workflow": [
+    {
+      "workflow_id": "Suivi_dossier",
+      "nom": "Suivi d'un dossier",
+      "description": "Exemple de cycle de traitement d'un dossier.",
+      "type_diagramme": "flowchart",
+      "orientation": "TD",
+      "actif": true
+    }
+  ],
+  "Etat": [
+    {
+      "etat_id": "A_qualifier",
+      "workflow_id": "Suivi_dossier",
+      "nom": "À qualifier",
+      "type_etat": "initial",
+      "ordre": 10
+    },
+    {
+      "etat_id": "En_instruction",
+      "workflow_id": "Suivi_dossier",
+      "nom": "En instruction",
+      "type_etat": "normal",
+      "ordre": 20
+    },
+    {
+      "etat_id": "A_valider",
+      "workflow_id": "Suivi_dossier",
+      "nom": "À valider",
+      "type_etat": "validation",
+      "ordre": 30
+    },
+    {
+      "etat_id": "En_correction",
+      "workflow_id": "Suivi_dossier",
+      "nom": "En correction",
+      "type_etat": "blocage",
+      "ordre": 40
+    },
+    {
+      "etat_id": "Clos",
+      "workflow_id": "Suivi_dossier",
+      "nom": "Clos",
+      "type_etat": "final",
+      "ordre": 50
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Qualifier_instruction",
+      "workflow_id": "Suivi_dossier",
+      "etat_source_id": "A_qualifier",
+      "etat_cible_id": "En_instruction",
+      "libelle": "dossier complet",
+      "actif": true
+    },
+    {
+      "transition_id": "Qualifier_correction",
+      "workflow_id": "Suivi_dossier",
+      "etat_source_id": "A_qualifier",
+      "etat_cible_id": "En_correction",
+      "libelle": "dossier incomplet",
+      "actif": true
+    },
+    {
+      "transition_id": "Instruction_validation",
+      "workflow_id": "Suivi_dossier",
+      "etat_source_id": "En_instruction",
+      "etat_cible_id": "A_valider",
+      "libelle": "conforme",
+      "actif": true
+    },
+    {
+      "transition_id": "Validation_cloture",
+      "workflow_id": "Suivi_dossier",
+      "etat_source_id": "A_valider",
+      "etat_cible_id": "Clos",
+      "libelle": "accepté",
+      "actif": true
+    },
+    {
+      "transition_id": "Validation_correction",
+      "workflow_id": "Suivi_dossier",
+      "etat_source_id": "A_valider",
+      "etat_cible_id": "En_correction",
+      "libelle": "refusé",
+      "actif": true
+    },
+    {
+      "transition_id": "Correction_instruction",
+      "workflow_id": "Suivi_dossier",
+      "etat_source_id": "En_correction",
+      "etat_cible_id": "En_instruction",
+      "libelle": "corrigé",
+      "actif": true
+    },
+    {
+      "transition_id": "Transition_archivee",
+      "workflow_id": "Suivi_dossier",
+      "etat_source_id": "En_instruction",
+      "etat_cible_id": "Clos",
+      "libelle": "ancienne transition",
+      "actif": false
+    }
+  ],
+  "Role": [],
+  "Regle": [],
+  "Generation_Mermaid": []
+}

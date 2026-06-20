@@ -24,7 +24,10 @@
         { "name": "ordre", "type": "number", "required": false },
         { "name": "contenu", "type": "long_text", "required": false },
         { "name": "type_contenu", "type": "choice", "values": ["markdown", "html", "texte"], "required": false },
-        { "name": "couleur", "type": "text", "required": false }
+        { "name": "couleur", "type": "text", "required": false },
+        { "name": "type_lien", "type": "choice", "values": ["page_phase", "page_etat", "url"], "required": false },
+        { "name": "cible_lien", "type": "text", "required": false },
+        { "name": "libelle_lien", "type": "text", "required": false }
       ]
     },
     {
@@ -41,6 +44,9 @@
         { "name": "action_associee", "type": "long_text", "required": false },
         { "name": "contenu", "type": "long_text", "required": false },
         { "name": "type_contenu", "type": "choice", "values": ["markdown", "html", "texte"], "required": false },
+        { "name": "type_lien", "type": "choice", "values": ["page_phase", "page_etat", "url"], "required": false },
+        { "name": "cible_lien", "type": "text", "required": false },
+        { "name": "libelle_lien", "type": "text", "required": false },
         { "name": "actif", "type": "boolean", "required": true }
       ]
     },

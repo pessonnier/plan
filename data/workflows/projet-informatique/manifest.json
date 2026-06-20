@@ -1,0 +1,18 @@
+{
+  "format": "workflow-data-manifest-v1",
+  "schema": "../../../schema/workflow-model.json",
+  "site": {
+    "overview_workflow_id": "Phases_projet_informatique",
+    "detail_workflow_id": "Projet_informatique"
+  },
+  "files": [
+    "00-referentiel.json",
+    "00-phases.json",
+    "01-cadrage-budgetisation.json",
+    "02-specifications-conception-marche.json",
+    "03-realisation-qualification.json",
+    "04-mise-en-production.json",
+    "05-maintenance.json",
+    "06-decommissionnement.json"
+  ]
+}

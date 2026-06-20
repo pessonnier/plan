@@ -1,0 +1,148 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Maintenance",
+      "workflow_id": "Projet_informatique",
+      "nom": "Maintenance courante",
+      "description": "<p>Le service est exploité selon ses niveaux de service avec suivi des incidents, problèmes, obsolescences, capacités et coûts.</p>",
+      "type_etat": "normal",
+      "ordre": 250,
+      "contenu": "<p>Les revues périodiques couvrent sécurité, continuité, performance et dette technique.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Evolution",
+      "workflow_id": "Projet_informatique",
+      "nom": "Évolution en réalisation",
+      "description": "<p>Une évolution fonctionnelle ou technique est développée dans un périmètre maîtrisé et soumise aux contrôles adaptés.</p>",
+      "type_etat": "normal",
+      "ordre": 260,
+      "contenu": "<p>L'impact sur l'architecture, le budget, la sécurité et l'exploitation est évalué.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Correction",
+      "workflow_id": "Projet_informatique",
+      "nom": "Correction en réalisation",
+      "description": "<p>Une anomalie ou vulnérabilité est corrigée avec priorité, traçabilité, tests de non-régression et procédure de déploiement.</p>",
+      "type_etat": "normal",
+      "ordre": 270,
+      "contenu": "<p>Les corrections urgentes restent soumises à une autorisation et une revue a posteriori.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Revalidation",
+      "workflow_id": "Projet_informatique",
+      "nom": "Revalidation de maintenance",
+      "description": "<p>La livraison de maintenance a passé les contrôles de qualité, sécurité, recette et exploitabilité proportionnés à son risque.</p>",
+      "type_etat": "validation",
+      "ordre": 280,
+      "contenu": "<p>La preuve des contrôles est conservée avec la version livrée.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Fin_maintenance_decidee",
+      "workflow_id": "Projet_informatique",
+      "nom": "Fin de maintenance décidée",
+      "description": "<p>Le sponsor et les responsables du SI ont décidé la fin de vie sur la base des coûts, risques, usages et solutions de remplacement.</p>",
+      "type_etat": "validation",
+      "ordre": 290,
+      "contenu": "<p>Une date cible, un budget et des responsables de décommissionnement sont désignés.</p>",
+      "type_contenu": "html",
+      "type_lien": "page_phase",
+      "cible_lien": "phases/06-decommissionnement.html",
+      "libelle_lien": "Poursuivre vers le décommissionnement"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Transferer_maintenance",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Service_actif",
+      "etat_cible_id": "Maintenance",
+      "libelle": "transfert accepté",
+      "condition": "Documentation, supervision, support et responsabilités transférés.",
+      "role_autorise": "Maintenance",
+      "action_associee": "Prendre en charge le cycle de vie courant.",
+      "actif": true
+    },
+    {
+      "transition_id": "Lancer_evolution",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Maintenance",
+      "etat_cible_id": "Evolution",
+      "libelle": "évolution approuvée",
+      "condition": "Demande priorisée et impact évalué.",
+      "role_autorise": "Maintenance",
+      "action_associee": "Planifier l'évolution.",
+      "actif": true
+    },
+    {
+      "transition_id": "Lancer_correction",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Maintenance",
+      "etat_cible_id": "Correction",
+      "libelle": "correction requise",
+      "condition": "Incident, problème ou vulnérabilité confirmé.",
+      "role_autorise": "Maintenance",
+      "action_associee": "Prioriser et affecter la correction.",
+      "actif": true
+    },
+    {
+      "transition_id": "Revalider_evolution",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Evolution",
+      "etat_cible_id": "Revalidation",
+      "libelle": "évolution testée",
+      "condition": "Contrôles proportionnés au risque terminés.",
+      "role_autorise": "Qualite",
+      "action_associee": "Soumettre la livraison de maintenance.",
+      "actif": true
+    },
+    {
+      "transition_id": "Revalider_correction",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Correction",
+      "etat_cible_id": "Revalidation",
+      "libelle": "correction testée",
+      "condition": "Correction et non-régression démontrées.",
+      "role_autorise": "Qualite",
+      "action_associee": "Soumettre la livraison de maintenance.",
+      "actif": true
+    },
+    {
+      "transition_id": "Retour_maintenance",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Revalidation",
+      "etat_cible_id": "Maintenance",
+      "libelle": "livraison déployée",
+      "condition": "Changement autorisé et contrôles post-déploiement réussis.",
+      "role_autorise": "Exploitation",
+      "action_associee": "Actualiser la référence du service.",
+      "actif": true
+    },
+    {
+      "transition_id": "Decider_fin_maintenance",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Maintenance",
+      "etat_cible_id": "Fin_maintenance_decidee",
+      "libelle": "fin de vie approuvée",
+      "condition": "Analyse coûts, risques, usages et remplacement approuvée.",
+      "role_autorise": "Sponsor",
+      "action_associee": "Mandater le décommissionnement.",
+      "actif": true
+    }
+  ],
+  "Regle": [
+    {
+      "regle_id": "R_Revalidation_maintenance",
+      "workflow_id": "Projet_informatique",
+      "transition_id": "Retour_maintenance",
+      "etat_id": "Revalidation",
+      "nom": "Contrôles de livraison de maintenance",
+      "expression": "Tests réussis ET documentation actualisée ET changement autorisé",
+      "message_erreur": "La livraison de maintenance n'est pas suffisamment contrôlée.",
+      "bloquante": true
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Specifications",
+      "workflow_id": "Projet_informatique",
+      "nom": "Spécifications en cours",
+      "description": "<p>Les exigences fonctionnelles, non fonctionnelles, réglementaires et d'exploitabilité sont décrites et priorisées.</p>",
+      "type_etat": "normal",
+      "ordre": 70,
+      "contenu": "<p>Chaque exigence doit être traçable vers un besoin et un critère de recette.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Specifications_validees",
+      "workflow_id": "Projet_informatique",
+      "nom": "Spécifications validées",
+      "description": "<p>Le métier, la sécurité, l'exploitation et les contributeurs techniques ont approuvé la référence des exigences.</p>",
+      "type_etat": "validation",
+      "ordre": 80,
+      "contenu": "<p>Les modifications ultérieures sont soumises à la gestion des changements.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Architecture_concue",
+      "workflow_id": "Projet_informatique",
+      "nom": "Architecture conçue",
+      "description": "<p>L'architecture applicative, technique, données et intégration est documentée avec ses décisions structurantes.</p>",
+      "type_etat": "normal",
+      "ordre": 90,
+      "contenu": "<p>Les capacités, dépendances, sauvegardes et exigences de continuité sont couvertes.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Architecture_validee",
+      "workflow_id": "Projet_informatique",
+      "nom": "Architecture validée",
+      "description": "<p>Les revues d'architecture, de sécurité et de protection des données ont levé les réserves bloquantes.</p>",
+      "type_etat": "validation",
+      "ordre": 100,
+      "contenu": "<p>Les dérogations éventuelles sont formellement acceptées et limitées dans le temps.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Dossier_marche",
+      "workflow_id": "Projet_informatique",
+      "nom": "Marché en préparation",
+      "description": "<p>Le besoin, les critères de sélection, les clauses de sécurité, les niveaux de service et les livrables contractuels sont préparés.</p>",
+      "type_etat": "normal",
+      "ordre": 110,
+      "contenu": "<p>Le dossier respecte les règles achats et de mise en concurrence applicables.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Marche_attribue",
+      "workflow_id": "Projet_informatique",
+      "nom": "Marché attribué",
+      "description": "<p>La consultation est achevée, le fournisseur est retenu et les engagements contractuels sont exécutoires.</p>",
+      "type_etat": "validation",
+      "ordre": 120,
+      "contenu": "<p>Les responsabilités, pénalités, réversibilité et droits d'audit sont contractualisés.</p>",
+      "type_contenu": "html",
+      "type_lien": "page_phase",
+      "cible_lien": "phases/03-realisation-qualification.html",
+      "libelle_lien": "Poursuivre vers la réalisation et la qualification"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Demarrer_specifications",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Budget_valide",
+      "etat_cible_id": "Specifications",
+      "libelle": "spécification autorisée",
+      "condition": "Budget validé et équipe de conception mobilisée.",
+      "role_autorise": "Chef_projet",
+      "action_associee": "Ouvrir la référence des exigences.",
+      "actif": true
+    },
+    {
+      "transition_id": "Valider_specifications",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Specifications",
+      "etat_cible_id": "Specifications_validees",
+      "libelle": "exigences approuvées",
+      "condition": "Critères de recette et exigences non fonctionnelles définis.",
+      "role_autorise": "Metier",
+      "action_associee": "Geler la version de référence.",
+      "actif": true
+    },
+    {
+      "transition_id": "Concevoir_architecture",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Specifications_validees",
+      "etat_cible_id": "Architecture_concue",
+      "libelle": "architecture produite",
+      "condition": "Exigences de référence disponibles.",
+      "role_autorise": "Architecture",
+      "action_associee": "Produire le dossier d'architecture.",
+      "actif": true
+    },
+    {
+      "transition_id": "Valider_architecture",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Architecture_concue",
+      "etat_cible_id": "Architecture_validee",
+      "libelle": "revues approuvées",
+      "condition": "Avis architecture et sécurité favorables.",
+      "role_autorise": "Architecture",
+      "action_associee": "Publier la décision d'architecture.",
+      "actif": true
+    },
+    {
+      "transition_id": "Preparer_marche",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Architecture_validee",
+      "etat_cible_id": "Dossier_marche",
+      "libelle": "consultation nécessaire",
+      "condition": "Une prestation ou acquisition externe est requise.",
+      "role_autorise": "Achats",
+      "action_associee": "Préparer et publier la consultation.",
+      "actif": true
+    },
+    {
+      "transition_id": "Attribuer_marche",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Dossier_marche",
+      "etat_cible_id": "Marche_attribue",
+      "libelle": "contrat notifié",
+      "condition": "Analyse des offres achevée et contrôles fournisseurs réalisés.",
+      "role_autorise": "Achats",
+      "action_associee": "Notifier le marché.",
+      "actif": true
+    }
+  ],
+  "Regle": [
+    {
+      "regle_id": "R_Exigences_tracables",
+      "workflow_id": "Projet_informatique",
+      "transition_id": "Valider_specifications",
+      "etat_id": "Specifications",
+      "nom": "Traçabilité des exigences",
+      "expression": "Chaque exigence possède un propriétaire, une priorité et un critère d'acceptation",
+      "message_erreur": "Les exigences incomplètes ne peuvent pas être validées.",
+      "bloquante": true
+    },
+    {
+      "regle_id": "R_Clauses_marche",
+      "workflow_id": "Projet_informatique",
+      "transition_id": "Attribuer_marche",
+      "etat_id": "Dossier_marche",
+      "nom": "Clauses d'entreprise obligatoires",
+      "expression": "Sécurité ET confidentialité ET réversibilité ET niveaux de service présents",
+      "message_erreur": "Le marché doit contenir les clauses obligatoires.",
+      "bloquante": true
+    }
+  ]
+}

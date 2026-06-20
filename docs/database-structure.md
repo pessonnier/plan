@@ -53,6 +53,9 @@ La table `Etat` décrit les états possibles d'un workflow.
 | `contenu` | texte long | non | Contenu documentaire associé à l'état. |
 | `type_contenu` | choix | non | `markdown`, `html`, `texte`. |
 | `couleur` | texte | non | Indication de style éventuelle pour Mermaid ou l'interface. |
+| `type_lien` | choix | non | Nature du lien : `page_phase`, `page_etat` ou `url`. |
+| `cible_lien` | texte | non | Page interne ou URL ciblée par l'état. |
+| `libelle_lien` | texte | non | Libellé accessible décrivant la navigation. |
 
 ## Table `Transition`
 
@@ -70,6 +73,9 @@ La table `Transition` porte la logique principale du workflow.
 | `action_associee` | texte long | non | Action attendue lors de la transition. |
 | `contenu` | texte long | non | Documentation associée à la transition. |
 | `type_contenu` | choix | non | `markdown`, `html`, `texte`. |
+| `type_lien` | choix | non | Nature du lien : `page_phase`, `page_etat` ou `url`. |
+| `cible_lien` | texte | non | Page interne ou URL associée à la transition. |
+| `libelle_lien` | texte | non | Libellé accessible décrivant la navigation. |
 | `actif` | booléen | oui | Indique si la transition est utilisable. |
 
 ## Table `Role`
@@ -120,3 +126,76 @@ La table `Generation_Mermaid` conserve les représentations Mermaid générées 
 - Une `Regle` peut être attachée à un état, à une transition, ou aux deux.
 - Le champ `type_contenu` doit indiquer comment interpréter le champ `contenu` : Markdown, HTML ou texte brut.
 - Les identifiants utilisés dans Mermaid doivent éviter les espaces, accents et caractères spéciaux.
+- Un lien interne `page_phase` doit cibler `phases/<identifiant>.html`.
+- Un lien interne `page_etat` doit cibler `states/<identifiant>.html`.
+- Un lien de type `url` doit utiliser HTTP ou HTTPS.
+- `type_lien` et `cible_lien` doivent être renseignés ensemble.
+
+## Workflow directeur et phases
+
+Un site peut distinguer deux workflows dans le même jeu de données :
+
+- un workflow directeur contenant uniquement les grandes phases ;
+- un workflow détaillé contenant les états opérationnels des pages de phase.
+
+Le manifeste les désigne dans sa section `site` :
+
+```json
+{
+  "site": {
+    "overview_workflow_id": "Phases_projet_informatique",
+    "detail_workflow_id": "Projet_informatique"
+  }
+}
+```
+
+Les états du workflow directeur utilisent `type_lien = page_phase`. Les états
+terminaux des diagrammes détaillés utilisent le même mécanisme pour conduire à
+la phase suivante.
+
+## Compatibilité entre le modèle et les données
+
+`schema/workflow-model.json` est la définition de référence. Les fichiers de
+données ne peuvent employer que les tables et champs déclarés dans ce modèle.
+Ils doivent respecter les types, champs obligatoires, choix et références
+définis par le schéma.
+
+Cette compatibilité est obligatoire dans les deux sens :
+
+- une évolution du modèle doit maintenir ou migrer les jeux de données ;
+- une évolution des données doit rester conforme au modèle courant.
+
+Le contrôle est automatisé par `scripts/validate_workflow_data.py` et par les
+tests du répertoire `tests`. Une modification du modèle ou des données ne doit
+pas être intégrée si ces contrôles échouent.
+
+## Jeux de données fragmentés
+
+Un workflow volumineux peut être réparti dans plusieurs fichiers JSON. Chaque
+fragment contient un sous-ensemble des tables et enregistrements du modèle. Un
+manifeste ordonne leur assemblage :
+
+```json
+{
+  "format": "workflow-data-manifest-v1",
+  "schema": "../../../schema/workflow-model.json",
+  "files": [
+    "00-referentiel.json",
+    "01-cadrage-budgetisation.json"
+  ]
+}
+```
+
+Règles du format :
+
+- les chemins `schema` et `files` sont relatifs au manifeste ;
+- chaque clé d'un fragment doit être une table du modèle ;
+- chaque valeur associée à une table doit être une liste d'enregistrements ;
+- une table peut être répartie entre plusieurs fragments ;
+- les identifiants doivent être uniques après assemblage ;
+- les références peuvent cibler un enregistrement d'un autre fragment ;
+- le jeu assemblé doit contenir toutes les tables du modèle, même si certaines
+  restent vides.
+
+Le jeu de travail `data/workflows/projet-informatique/manifest.json` illustre
+ce format.

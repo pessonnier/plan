@@ -1,0 +1,168 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Dossier_MEP",
+      "workflow_id": "Projet_informatique",
+      "nom": "Dossier de mise en production",
+      "description": "<p>Le plan de changement décrit les opérations, responsabilités, contrôles, communications, sauvegardes et retour arrière.</p>",
+      "type_etat": "normal",
+      "ordre": 190,
+      "contenu": "<p>Le dossier inclut les procédures d'exploitation et les contacts de support.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "CAB_valide",
+      "workflow_id": "Projet_informatique",
+      "nom": "Changement autorisé",
+      "description": "<p>Le comité des changements a évalué les risques, dépendances, indisponibilités et moyens de retour arrière.</p>",
+      "type_etat": "validation",
+      "ordre": 200,
+      "contenu": "<p>La fenêtre de changement et les responsables sont confirmés.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Preproduction",
+      "workflow_id": "Projet_informatique",
+      "nom": "Validation en préproduction",
+      "description": "<p>Le déploiement, les migrations, la supervision et le retour arrière sont répétés dans un environnement représentatif.</p>",
+      "type_etat": "validation",
+      "ordre": 210,
+      "contenu": "<p>Les preuves d'exécution sont jointes au dossier de changement.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "MEP",
+      "workflow_id": "Projet_informatique",
+      "nom": "Mise en production",
+      "description": "<p>Le changement autorisé est exécuté sous contrôle avec journalisation des étapes et décision explicite de poursuite ou de repli.</p>",
+      "type_etat": "normal",
+      "ordre": 220,
+      "contenu": "<p>Les contrôles techniques et fonctionnels post-déploiement sont obligatoires.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "MEP_a_reprendre",
+      "workflow_id": "Projet_informatique",
+      "nom": "Mise en production à reprendre",
+      "description": "<p>Le changement a été interrompu ou annulé après échec d'un contrôle, activation du retour arrière ou incident majeur.</p>",
+      "type_etat": "blocage",
+      "ordre": 230,
+      "contenu": "<p>Une analyse de cause et une nouvelle autorisation sont requises.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Service_actif",
+      "workflow_id": "Projet_informatique",
+      "nom": "Service actif",
+      "description": "<p>Le service est ouvert aux utilisateurs, supervisé, documenté et transféré aux équipes de support et d'exploitation.</p>",
+      "type_etat": "validation",
+      "ordre": 240,
+      "contenu": "<p>La période de garantie et les indicateurs de service sont démarrés.</p>",
+      "type_contenu": "html",
+      "type_lien": "page_phase",
+      "cible_lien": "phases/05-maintenance.html",
+      "libelle_lien": "Poursuivre vers l'exploitation et la maintenance"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Preparer_Dossier_MEP",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Pret_pour_MEP",
+      "etat_cible_id": "Dossier_MEP",
+      "libelle": "changement préparé",
+      "condition": "Version candidate et documents d'exploitation disponibles.",
+      "role_autorise": "Exploitation",
+      "action_associee": "Créer la demande de changement.",
+      "actif": true
+    },
+    {
+      "transition_id": "Autoriser_MEP",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Dossier_MEP",
+      "etat_cible_id": "CAB_valide",
+      "libelle": "CAB favorable",
+      "condition": "Plan de retour arrière testé et ressources confirmées.",
+      "role_autorise": "CAB",
+      "action_associee": "Autoriser la fenêtre de changement.",
+      "actif": true
+    },
+    {
+      "transition_id": "Valider_preproduction",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "CAB_valide",
+      "etat_cible_id": "Preproduction",
+      "libelle": "répétition conforme",
+      "condition": "Déploiement et contrôles exécutés avec succès.",
+      "role_autorise": "Exploitation",
+      "action_associee": "Confirmer l'exécutabilité du changement.",
+      "actif": true
+    },
+    {
+      "transition_id": "Executer_MEP",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Preproduction",
+      "etat_cible_id": "MEP",
+      "libelle": "fenêtre ouverte",
+      "condition": "Autorisation CAB toujours valide.",
+      "role_autorise": "Exploitation",
+      "action_associee": "Exécuter le plan de changement.",
+      "actif": true
+    },
+    {
+      "transition_id": "Echec_MEP",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "MEP",
+      "etat_cible_id": "MEP_a_reprendre",
+      "libelle": "contrôle en échec",
+      "condition": "Critère d'arrêt atteint ou contrôle post-déploiement en échec.",
+      "role_autorise": "Exploitation",
+      "action_associee": "Déclencher le retour arrière.",
+      "actif": true
+    },
+    {
+      "transition_id": "Repreparer_MEP",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "MEP_a_reprendre",
+      "etat_cible_id": "Dossier_MEP",
+      "libelle": "cause traitée",
+      "condition": "Analyse de cause achevée et plan corrigé.",
+      "role_autorise": "Chef_projet",
+      "action_associee": "Soumettre une nouvelle demande de changement.",
+      "actif": true
+    },
+    {
+      "transition_id": "Ouvrir_service",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "MEP",
+      "etat_cible_id": "Service_actif",
+      "libelle": "contrôles conformes",
+      "condition": "Supervision active et validation métier post-déploiement obtenue.",
+      "role_autorise": "Exploitation",
+      "action_associee": "Prononcer l'ouverture du service.",
+      "actif": true
+    }
+  ],
+  "Regle": [
+    {
+      "regle_id": "R_Retour_arriere",
+      "workflow_id": "Projet_informatique",
+      "transition_id": "Autoriser_MEP",
+      "etat_id": "Dossier_MEP",
+      "nom": "Retour arrière opérationnel",
+      "expression": "Procédure documentée ET testée ET durée compatible avec la fenêtre",
+      "message_erreur": "La mise en production exige un retour arrière opérationnel.",
+      "bloquante": true
+    },
+    {
+      "regle_id": "R_Controle_post_MEP",
+      "workflow_id": "Projet_informatique",
+      "transition_id": "Ouvrir_service",
+      "etat_id": "MEP",
+      "nom": "Contrôles post-déploiement",
+      "expression": "Santé technique OK ET test fonctionnel OK ET supervision active",
+      "message_erreur": "Le service ne peut pas être ouvert sans contrôles concluants.",
+      "bloquante": true
+    }
+  ]
+}

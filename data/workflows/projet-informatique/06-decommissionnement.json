@@ -1,0 +1,133 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Decommission_planifie",
+      "workflow_id": "Projet_informatique",
+      "nom": "Décommissionnement planifié",
+      "description": "<p>Le plan organise la migration des utilisateurs, l'arrêt des flux, la conservation des preuves, la communication et la réversibilité.</p>",
+      "type_etat": "normal",
+      "ordre": 300,
+      "contenu": "<p>Les dépendances techniques et contractuelles sont recensées.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Donnees_archivees",
+      "workflow_id": "Projet_informatique",
+      "nom": "Données traitées",
+      "description": "<p>Les données sont migrées, archivées ou supprimées selon leur finalité, les durées légales et les décisions de conservation.</p>",
+      "type_etat": "validation",
+      "ordre": 310,
+      "contenu": "<p>Les opérations sont traçables et validées par les responsables des données.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Services_arretes",
+      "workflow_id": "Projet_informatique",
+      "nom": "Services arrêtés",
+      "description": "<p>Les accès utilisateurs, traitements, interfaces, tâches planifiées et flux réseau sont arrêtés de manière contrôlée.</p>",
+      "type_etat": "normal",
+      "ordre": 320,
+      "contenu": "<p>L'absence d'usage résiduel est vérifiée avant suppression des ressources.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Actifs_retires",
+      "workflow_id": "Projet_informatique",
+      "nom": "Actifs retirés",
+      "description": "<p>Les infrastructures, comptes techniques, certificats, licences, contrats, secrets et éléments de supervision sont retirés.</p>",
+      "type_etat": "validation",
+      "ordre": 330,
+      "contenu": "<p>Les inventaires techniques, financiers et de sécurité sont mis à jour.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Decommissionne",
+      "workflow_id": "Projet_informatique",
+      "nom": "Projet décommissionné",
+      "description": "<p>Le service est définitivement fermé, les obligations résiduelles sont attribuées et la preuve de clôture est archivée.</p>",
+      "type_etat": "final",
+      "ordre": 340,
+      "contenu": "<p>Le bilan final confirme la suppression des coûts et risques devenus inutiles.</p>",
+      "type_contenu": "html"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Planifier_decommissionnement",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Fin_maintenance_decidee",
+      "etat_cible_id": "Decommission_planifie",
+      "libelle": "plan approuvé",
+      "condition": "Responsables, budget, calendrier et solution de remplacement confirmés.",
+      "role_autorise": "Chef_projet",
+      "action_associee": "Publier le plan de décommissionnement.",
+      "actif": true
+    },
+    {
+      "transition_id": "Traiter_donnees",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Decommission_planifie",
+      "etat_cible_id": "Donnees_archivees",
+      "libelle": "sort des données validé",
+      "condition": "Règles de migration, archivage et suppression approuvées.",
+      "role_autorise": "DPO",
+      "action_associee": "Exécuter et tracer le traitement des données.",
+      "actif": true
+    },
+    {
+      "transition_id": "Arreter_services",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Donnees_archivees",
+      "etat_cible_id": "Services_arretes",
+      "libelle": "arrêt autorisé",
+      "condition": "Utilisateurs migrés et données nécessaires sécurisées.",
+      "role_autorise": "Exploitation",
+      "action_associee": "Arrêter les traitements et interfaces.",
+      "actif": true
+    },
+    {
+      "transition_id": "Retirer_actifs",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Services_arretes",
+      "etat_cible_id": "Actifs_retires",
+      "libelle": "ressources supprimées",
+      "condition": "Période d'observation terminée sans usage résiduel.",
+      "role_autorise": "Exploitation",
+      "action_associee": "Supprimer les ressources et mettre à jour les inventaires.",
+      "actif": true
+    },
+    {
+      "transition_id": "Clore_decommissionnement",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Actifs_retires",
+      "etat_cible_id": "Decommissionne",
+      "libelle": "clôture contrôlée",
+      "condition": "Contrôles techniques, financiers, contractuels et données achevés.",
+      "role_autorise": "Sponsor",
+      "action_associee": "Signer le procès-verbal de clôture.",
+      "actif": true
+    }
+  ],
+  "Regle": [
+    {
+      "regle_id": "R_Donnees_fin_vie",
+      "workflow_id": "Projet_informatique",
+      "transition_id": "Traiter_donnees",
+      "etat_id": "Decommission_planifie",
+      "nom": "Traitement conforme des données",
+      "expression": "Inventaire données complet ET décision de conservation validée ET preuve d'exécution prévue",
+      "message_erreur": "Le sort de chaque catégorie de données doit être défini.",
+      "bloquante": true
+    },
+    {
+      "regle_id": "R_Cloture_complete",
+      "workflow_id": "Projet_informatique",
+      "transition_id": "Clore_decommissionnement",
+      "etat_id": "Actifs_retires",
+      "nom": "Clôture complète",
+      "expression": "Ressources supprimées ET contrats clos ET inventaires mis à jour ET preuves archivées",
+      "message_erreur": "Le décommissionnement ne peut pas être clôturé.",
+      "bloquante": true
+    }
+  ]
+}
