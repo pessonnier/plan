@@ -1,0 +1,85 @@
+{
+  "tables": [
+    {
+      "name": "Workflow",
+      "description": "Décrit un processus métier ou un circuit de suivi.",
+      "fields": [
+        { "name": "workflow_id", "type": "text", "required": true },
+        { "name": "nom", "type": "text", "required": true },
+        { "name": "description", "type": "long_text", "required": false },
+        { "name": "type_diagramme", "type": "choice", "values": ["flowchart", "stateDiagram"], "required": true },
+        { "name": "orientation", "type": "choice", "values": ["TD", "LR", "BT", "RL"], "required": false },
+        { "name": "actif", "type": "boolean", "required": true }
+      ]
+    },
+    {
+      "name": "Etat",
+      "description": "Décrit les états possibles d'un workflow.",
+      "fields": [
+        { "name": "etat_id", "type": "text", "required": true },
+        { "name": "workflow_id", "type": "reference", "references": "Workflow.workflow_id", "required": true },
+        { "name": "nom", "type": "text", "required": true },
+        { "name": "description", "type": "long_text", "required": false },
+        { "name": "type_etat", "type": "choice", "values": ["initial", "normal", "validation", "blocage", "final"], "required": true },
+        { "name": "ordre", "type": "number", "required": false },
+        { "name": "contenu", "type": "long_text", "required": false },
+        { "name": "type_contenu", "type": "choice", "values": ["markdown", "html", "texte"], "required": false },
+        { "name": "couleur", "type": "text", "required": false }
+      ]
+    },
+    {
+      "name": "Transition",
+      "description": "Décrit les passages autorisés entre états.",
+      "fields": [
+        { "name": "transition_id", "type": "text", "required": true },
+        { "name": "workflow_id", "type": "reference", "references": "Workflow.workflow_id", "required": true },
+        { "name": "etat_source_id", "type": "reference", "references": "Etat.etat_id", "required": true },
+        { "name": "etat_cible_id", "type": "reference", "references": "Etat.etat_id", "required": true },
+        { "name": "libelle", "type": "text", "required": true },
+        { "name": "condition", "type": "long_text", "required": false },
+        { "name": "role_autorise", "type": "reference", "references": "Role.role_id", "required": false },
+        { "name": "action_associee", "type": "long_text", "required": false },
+        { "name": "contenu", "type": "long_text", "required": false },
+        { "name": "type_contenu", "type": "choice", "values": ["markdown", "html", "texte"], "required": false },
+        { "name": "actif", "type": "boolean", "required": true }
+      ]
+    },
+    {
+      "name": "Role",
+      "description": "Décrit les acteurs et responsabilités dans le workflow.",
+      "fields": [
+        { "name": "role_id", "type": "text", "required": true },
+        { "name": "nom", "type": "text", "required": true },
+        { "name": "description", "type": "long_text", "required": false },
+        { "name": "contenu", "type": "long_text", "required": false },
+        { "name": "type_contenu", "type": "choice", "values": ["markdown", "html", "texte"], "required": false }
+      ]
+    },
+    {
+      "name": "Regle",
+      "description": "Décrit les règles associées aux états ou transitions.",
+      "fields": [
+        { "name": "regle_id", "type": "text", "required": true },
+        { "name": "workflow_id", "type": "reference", "references": "Workflow.workflow_id", "required": true },
+        { "name": "transition_id", "type": "reference", "references": "Transition.transition_id", "required": false },
+        { "name": "etat_id", "type": "reference", "references": "Etat.etat_id", "required": false },
+        { "name": "nom", "type": "text", "required": true },
+        { "name": "expression", "type": "long_text", "required": false },
+        { "name": "message_erreur", "type": "long_text", "required": false },
+        { "name": "bloquante", "type": "boolean", "required": true }
+      ]
+    },
+    {
+      "name": "Generation_Mermaid",
+      "description": "Stocke les diagrammes Mermaid générés à partir du modèle.",
+      "fields": [
+        { "name": "generation_id", "type": "text", "required": true },
+        { "name": "workflow_id", "type": "reference", "references": "Workflow.workflow_id", "required": true },
+        { "name": "type_diagramme", "type": "choice", "values": ["flowchart", "stateDiagram"], "required": true },
+        { "name": "code_mermaid", "type": "long_text", "required": true },
+        { "name": "date_generation", "type": "datetime", "required": true },
+        { "name": "version", "type": "text", "required": false }
+      ]
+    }
+  ]
+}
