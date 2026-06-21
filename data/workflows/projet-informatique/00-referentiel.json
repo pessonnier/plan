@@ -1,0 +1,88 @@
+{
+  "Workflow": [
+    {
+      "workflow_id": "Phases_projet_informatique",
+      "nom": "Phases d'un projet informatique",
+      "description": "Vue directrice d'un projet informatique fondée sur les jalons de gouvernance, de commande publique, de mise en service, d'exploitation et de retrait.",
+      "type_diagramme": "flowchart",
+      "orientation": "LR",
+      "actif": true
+    },
+    {
+      "workflow_id": "Projet_informatique",
+      "nom": "Réalisation et cycle de vie d'un projet informatique",
+      "description": "Workflow de gouvernance couvrant l'opportunité, le budget, les spécifications, le marché, la réalisation, la mise en production, la maintenance et le décommissionnement.",
+      "type_diagramme": "flowchart",
+      "orientation": "LR",
+      "actif": false
+    }
+  ],
+  "Role": [
+    {
+      "role_id": "Sponsor",
+      "nom": "Sponsor métier",
+      "description": "Porte la valeur métier, les arbitrages majeurs et la décision de lancement."
+    },
+    {
+      "role_id": "Chef_projet",
+      "nom": "Chef de projet",
+      "description": "Coordonne le planning, les risques, les livrables et les instances."
+    },
+    {
+      "role_id": "Finance",
+      "nom": "Direction financière",
+      "description": "Contrôle les hypothèses budgétaires et l'autorisation de dépense."
+    },
+    {
+      "role_id": "Architecture",
+      "nom": "Architecture d'entreprise",
+      "description": "Valide l'architecture, l'intégration au SI et les standards techniques."
+    },
+    {
+      "role_id": "Securite",
+      "nom": "Sécurité des systèmes d'information",
+      "description": "Évalue les risques et prononce l'homologation de sécurité."
+    },
+    {
+      "role_id": "Achats",
+      "nom": "Direction des achats",
+      "description": "Pilote la consultation, la contractualisation et l'attribution du marché."
+    },
+    {
+      "role_id": "Equipe_dev",
+      "nom": "Équipe de réalisation",
+      "description": "Conçoit, développe, documente et corrige la solution."
+    },
+    {
+      "role_id": "Qualite",
+      "nom": "Qualité et tests",
+      "description": "Organise les contrôles qualité et conserve les preuves de test."
+    },
+    {
+      "role_id": "Metier",
+      "nom": "Représentants métier",
+      "description": "Définissent le besoin et prononcent la recette fonctionnelle."
+    },
+    {
+      "role_id": "Exploitation",
+      "nom": "Production et exploitation",
+      "description": "Prépare l'exploitation, exécute les changements et supervise le service."
+    },
+    {
+      "role_id": "CAB",
+      "nom": "Comité des changements",
+      "description": "Autorise la mise en production au regard des risques et prérequis."
+    },
+    {
+      "role_id": "Maintenance",
+      "nom": "Responsable de maintenance",
+      "description": "Pilote les évolutions, corrections, niveaux de service et dette technique."
+    },
+    {
+      "role_id": "DPO",
+      "nom": "Protection des données",
+      "description": "Contrôle la conservation, l'archivage et la suppression des données."
+    }
+  ],
+  "Generation_Mermaid": []
+}

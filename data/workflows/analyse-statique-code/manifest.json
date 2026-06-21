@@ -1,0 +1,17 @@
+{
+  "format": "workflow-data-manifest-v1",
+  "schema": "../../../schema/workflow-model.json",
+  "site": {
+    "overview_workflow_id": "Phases_analyse_statique",
+    "detail_workflow_id": "Analyse_statique_code"
+  },
+  "files": [
+    "00-referentiel.json",
+    "00-phases.json",
+    "01-cadrage-politique.json",
+    "02-preparation.json",
+    "03-execution.json",
+    "04-qualification.json",
+    "05-remediation-suivi.json"
+  ]
+}

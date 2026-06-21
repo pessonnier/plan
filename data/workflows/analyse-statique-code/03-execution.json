@@ -1,0 +1,84 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Analyse_lancee",
+      "workflow_id": "Analyse_statique_code",
+      "nom": "Analyse lancée",
+      "description": "<p>La campagne est exécutée sur la révision et la configuration validées.</p>",
+      "type_etat": "normal",
+      "ordre": 70,
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Analyse_en_echec",
+      "workflow_id": "Analyse_statique_code",
+      "nom": "Analyse en échec",
+      "description": "<p>Un incident d'outil, de construction ou de capacité empêche l'obtention de résultats complets.</p>",
+      "type_etat": "blocage",
+      "ordre": 80,
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Resultats_consolides",
+      "workflow_id": "Analyse_statique_code",
+      "nom": "Résultats consolidés",
+      "description": "<p>Les sorties des analyseurs, journaux et métriques de couverture sont regroupés et archivés.</p>",
+      "type_etat": "validation",
+      "ordre": 90,
+      "type_contenu": "html",
+      "type_lien": "page_phase",
+      "cible_lien": "phases/04-qualification.html",
+      "libelle_lien": "Poursuivre vers la qualification"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Executer_analyse",
+      "workflow_id": "Analyse_statique_code",
+      "etat_source_id": "Analyse_lancee",
+      "etat_cible_id": "Resultats_consolides",
+      "libelle": "exécution complète",
+      "role_autorise": "CI_CD",
+      "actif": true
+    },
+    {
+      "transition_id": "Signaler_echec_analyse",
+      "workflow_id": "Analyse_statique_code",
+      "etat_source_id": "Analyse_lancee",
+      "etat_cible_id": "Analyse_en_echec",
+      "libelle": "incident technique",
+      "role_autorise": "CI_CD",
+      "actif": true
+    },
+    {
+      "transition_id": "Relancer_analyse",
+      "workflow_id": "Analyse_statique_code",
+      "etat_source_id": "Analyse_en_echec",
+      "etat_cible_id": "Analyse_lancee",
+      "libelle": "cause corrigée",
+      "role_autorise": "Equipe_dev",
+      "actif": true
+    },
+    {
+      "transition_id": "Passer_qualification_resultats",
+      "workflow_id": "Analyse_statique_code",
+      "etat_source_id": "Resultats_consolides",
+      "etat_cible_id": "Alertes_a_qualifier",
+      "libelle": "résultats exploitables",
+      "role_autorise": "Qualite",
+      "actif": true
+    }
+  ],
+  "Regle": [
+    {
+      "regle_id": "R_Resultats_complets",
+      "workflow_id": "Analyse_statique_code",
+      "transition_id": "Executer_analyse",
+      "etat_id": "Analyse_lancee",
+      "nom": "Résultats complets",
+      "expression": "Tous les outils terminés ET journaux archivés",
+      "message_erreur": "La campagne ne peut pas être qualifiée avec des résultats incomplets.",
+      "bloquante": true
+    }
+  ]
+}

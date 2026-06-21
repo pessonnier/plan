@@ -1,0 +1,129 @@
+{
+  "format": "requirements-traceability-v1",
+  "requirements": [
+    {
+      "id": "REQ-DATA-001",
+      "specification": "docs/specifications.md",
+      "code": [
+        "scripts/validate_workflow_data.py::validate_source",
+        "scripts/validate_workflow_data.py::validate_records_against_schema",
+        "scripts/validate_workflow_data.py::validate_references"
+      ],
+      "unit_tests": [
+        "tests/test_validate_workflow_data.py::ValidateWorkflowDataTests.test_all_fragmented_workflow_datasets_match_model",
+        "tests/test_validate_workflow_data.py::ValidateWorkflowDataTests.test_missing_cross_fragment_reference_is_rejected"
+      ],
+      "functional_tests": [
+        "tests/functional/test_cli_workflows.py::WorkflowCliFunctionalTests.test_validate_data_cli"
+      ]
+    },
+    {
+      "id": "REQ-MERMAID-001",
+      "specification": "docs/specifications.md",
+      "code": [
+        "scripts/generate_mermaid.py::generate_diagrams",
+        "scripts/generate_mermaid.py::generate_dataset_flowchart",
+        "scripts/generate_mermaid.py::generate_dataset_state_diagram"
+      ],
+      "unit_tests": [
+        "tests/test_generate_mermaid.py::GenerateMermaidTests.test_dataset_generates_both_diagram_types",
+        "tests/test_generate_mermaid.py::GenerateMermaidTests.test_invalid_mermaid_identifier_is_rejected"
+      ],
+      "functional_tests": [
+        "tests/functional/test_cli_workflows.py::WorkflowCliFunctionalTests.test_mermaid_cli_end_to_end"
+      ]
+    },
+    {
+      "id": "REQ-HTML-001",
+      "specification": "docs/specifications.md",
+      "code": [
+        "scripts/generate_workflow_html.py::render_workflow_page",
+        "scripts/html_rendering.py::state_card"
+      ],
+      "unit_tests": [
+        "tests/test_generate_workflow_html.py::GenerateWorkflowHtmlTests.test_single_page_contains_flowchart_then_phase_descriptions"
+      ],
+      "functional_tests": [
+        "tests/functional/test_cli_workflows.py::WorkflowCliFunctionalTests.test_html_page_cli_end_to_end"
+      ]
+    },
+    {
+      "id": "REQ-SITE-001",
+      "specification": "docs/specifications.md",
+      "code": [
+        "scripts/generate_workflow_site.py::generate_site",
+        "scripts/generate_workflow_site.py::render_state_page",
+        "scripts/generate_workflow_site.py::render_phase_page"
+      ],
+      "unit_tests": [
+        "tests/test_generate_workflow_html.py::GenerateWorkflowHtmlTests.test_static_site_contains_navigation_and_all_state_pages",
+        "tests/test_generate_workflow_html.py::GenerateWorkflowHtmlTests.test_static_site_uses_file_compatible_mermaid_bootstrap"
+      ],
+      "functional_tests": [
+        "tests/functional/test_cli_workflows.py::WorkflowCliFunctionalTests.test_static_site_cli_end_to_end"
+      ]
+    },
+    {
+      "id": "REQ-LINK-001",
+      "specification": "docs/specifications.md",
+      "code": [
+        "scripts/generate_mermaid.py::generate_dataset_flowchart",
+        "scripts/html_rendering.py::record_link_href",
+        "scripts/validate_workflow_data.py::validate_business_consistency"
+      ],
+      "unit_tests": [
+        "tests/test_validate_workflow_data.py::ValidateWorkflowDataTests.test_phase_overview_links_to_phase_pages",
+        "tests/test_validate_workflow_data.py::ValidateWorkflowDataTests.test_invalid_internal_link_is_rejected",
+        "tests/test_generate_workflow_html.py::GenerateWorkflowHtmlTests.test_static_site_contains_navigation_and_all_state_pages"
+      ],
+      "functional_tests": [
+        "tests/functional/test_cli_workflows.py::WorkflowCliFunctionalTests.test_static_site_cli_end_to_end"
+      ]
+    },
+    {
+      "id": "REQ-SEC-001",
+      "specification": "docs/specifications.md",
+      "code": [
+        "scripts/html_rendering.py::sanitize_documentation",
+        "scripts/html_rendering.py::DescriptionSanitizer"
+      ],
+      "unit_tests": [
+        "tests/test_generate_workflow_html.py::GenerateWorkflowHtmlTests.test_documentation_html_is_sanitized",
+        "tests/test_generate_workflow_html.py::GenerateWorkflowHtmlTests.test_non_html_documentation_is_escaped"
+      ],
+      "functional_tests": [
+        "tests/functional/test_cli_workflows.py::WorkflowCliFunctionalTests.test_unsafe_html_is_filtered_end_to_end"
+      ]
+    },
+    {
+      "id": "REQ-CATALOG-001",
+      "specification": "docs/specifications.md",
+      "code": [
+        "scripts/workflow_data.py::load_catalog",
+        "scripts/generate_workflow_site.py::generate_catalog_site",
+        "scripts/generate_workflow_site.py::render_catalog_page"
+      ],
+      "unit_tests": [
+        "tests/test_generate_workflow_html.py::GenerateWorkflowHtmlTests.test_catalog_generates_workflow_choice_and_two_sites"
+      ],
+      "functional_tests": [
+        "tests/functional/test_cli_workflows.py::WorkflowCliFunctionalTests.test_catalog_site_cli_end_to_end"
+      ]
+    },
+    {
+      "id": "REQ-TRACE-001",
+      "specification": "docs/specifications.md",
+      "code": [
+        "scripts/validate_traceability.py::validate_traceability"
+      ],
+      "unit_tests": [
+        "tests/test_traceability.py::TraceabilityTests.test_project_traceability_matrix_is_valid",
+        "tests/test_traceability.py::TraceabilityTests.test_missing_symbol_is_rejected",
+        "tests/test_traceability.py::TraceabilityTests.test_functional_test_must_be_in_functional_directory"
+      ],
+      "functional_tests": [
+        "tests/functional/test_cli_workflows.py::WorkflowCliFunctionalTests.test_traceability_cli"
+      ]
+    }
+  ]
+}

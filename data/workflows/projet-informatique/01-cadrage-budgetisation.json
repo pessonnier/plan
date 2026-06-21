@@ -1,0 +1,147 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Idee_projet",
+      "workflow_id": "Projet_informatique",
+      "nom": "Idée de projet enregistrée",
+      "description": "<p>Le besoin initial, le sponsor et la valeur attendue sont enregistrés avant toute consommation significative de ressources.</p>",
+      "type_etat": "initial",
+      "ordre": 10,
+      "contenu": "<ul><li>Problème métier</li><li>Sponsor</li><li>Bénéfices attendus</li></ul>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Opportunite_qualifiee",
+      "workflow_id": "Projet_informatique",
+      "nom": "Opportunité qualifiée",
+      "description": "<p>La cohérence stratégique, les bénéfices, les dépendances et les principaux risques ont été examinés.</p>",
+      "type_etat": "validation",
+      "ordre": 20,
+      "contenu": "<p>La note d'opportunité est approuvée par le sponsor.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Cadrage",
+      "workflow_id": "Projet_informatique",
+      "nom": "Cadrage en cours",
+      "description": "<p>Le périmètre, la gouvernance, le macro-planning, les hypothèses et les risques sont formalisés.</p>",
+      "type_etat": "normal",
+      "ordre": 30,
+      "contenu": "<p>Les parties prenantes et les responsabilités sont identifiées.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Budget_estime",
+      "workflow_id": "Projet_informatique",
+      "nom": "Budget estimé",
+      "description": "<p>Les coûts d'investissement, de fonctionnement, de licences, d'infrastructure et de maintenance sont consolidés.</p>",
+      "type_etat": "normal",
+      "ordre": 40,
+      "contenu": "<p>L'estimation inclut une réserve pour risques et une trajectoire pluriannuelle.</p>",
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Budget_valide",
+      "workflow_id": "Projet_informatique",
+      "nom": "Budget validé",
+      "description": "<p>L'enveloppe, le centre de coûts et l'autorisation d'engagement ont été validés par les instances compétentes.</p>",
+      "type_etat": "validation",
+      "ordre": 50,
+      "contenu": "<p>Le financement couvre la réalisation et les coûts récurrents prévisionnels.</p>",
+      "type_contenu": "html",
+      "type_lien": "page_phase",
+      "cible_lien": "phases/02-specifications-conception-marche.html",
+      "libelle_lien": "Poursuivre vers la conception et la commande publique"
+    },
+    {
+      "etat_id": "Budget_a_revoir",
+      "workflow_id": "Projet_informatique",
+      "nom": "Budget à revoir",
+      "description": "<p>Le dossier financier est incomplet, non soutenable ou nécessite un arbitrage complémentaire.</p>",
+      "type_etat": "blocage",
+      "ordre": 60,
+      "contenu": "<p>Les hypothèses doivent être corrigées avant une nouvelle présentation.</p>",
+      "type_contenu": "html"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Enregistrer_opportunite",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Idee_projet",
+      "etat_cible_id": "Opportunite_qualifiee",
+      "libelle": "opportunité retenue",
+      "condition": "Sponsor identifié et note d'opportunité approuvée.",
+      "role_autorise": "Sponsor",
+      "action_associee": "Autoriser le cadrage.",
+      "actif": true
+    },
+    {
+      "transition_id": "Lancer_cadrage",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Opportunite_qualifiee",
+      "etat_cible_id": "Cadrage",
+      "libelle": "cadrage lancé",
+      "condition": "Chef de projet nommé.",
+      "role_autorise": "Sponsor",
+      "action_associee": "Mandater le chef de projet.",
+      "actif": true
+    },
+    {
+      "transition_id": "Estimer_budget",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Cadrage",
+      "etat_cible_id": "Budget_estime",
+      "libelle": "estimation consolidée",
+      "condition": "Périmètre et hypothèses documentés.",
+      "role_autorise": "Chef_projet",
+      "action_associee": "Soumettre le dossier financier.",
+      "actif": true
+    },
+    {
+      "transition_id": "Valider_budget",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Budget_estime",
+      "etat_cible_id": "Budget_valide",
+      "libelle": "financement autorisé",
+      "condition": "Enveloppe et coûts récurrents approuvés.",
+      "role_autorise": "Finance",
+      "action_associee": "Enregistrer l'autorisation budgétaire.",
+      "actif": true
+    },
+    {
+      "transition_id": "Refuser_budget",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Budget_estime",
+      "etat_cible_id": "Budget_a_revoir",
+      "libelle": "budget non validé",
+      "condition": "Écart, risque financier ou pièce manquante.",
+      "role_autorise": "Finance",
+      "action_associee": "Notifier les corrections attendues.",
+      "actif": true
+    },
+    {
+      "transition_id": "Reviser_budget",
+      "workflow_id": "Projet_informatique",
+      "etat_source_id": "Budget_a_revoir",
+      "etat_cible_id": "Budget_estime",
+      "libelle": "budget révisé",
+      "condition": "Hypothèses et chiffrages corrigés.",
+      "role_autorise": "Chef_projet",
+      "action_associee": "Présenter une nouvelle version.",
+      "actif": true
+    }
+  ],
+  "Regle": [
+    {
+      "regle_id": "R_Budget_complet",
+      "workflow_id": "Projet_informatique",
+      "transition_id": "Valider_budget",
+      "etat_id": "Budget_estime",
+      "nom": "Complétude du budget",
+      "expression": "CAPEX renseigné ET OPEX renseigné ET réserve risques renseignée",
+      "message_erreur": "Le dossier budgétaire doit couvrir les coûts initiaux et récurrents.",
+      "bloquante": true
+    }
+  ]
+}

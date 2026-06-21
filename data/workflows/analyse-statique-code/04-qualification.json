@@ -1,0 +1,75 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Alertes_a_qualifier",
+      "workflow_id": "Analyse_statique_code",
+      "nom": "Alertes à qualifier",
+      "description": "<p>Les alertes sont affectées à des propriétaires et rapprochées des résultats antérieurs.</p>",
+      "type_etat": "normal",
+      "ordre": 100,
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Faux_positifs_traites",
+      "workflow_id": "Analyse_statique_code",
+      "nom": "Faux positifs traités",
+      "description": "<p>Les faux positifs sont justifiés, validés et associés à une règle d'expiration.</p>",
+      "type_etat": "validation",
+      "ordre": 110,
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Risques_qualifies",
+      "workflow_id": "Analyse_statique_code",
+      "nom": "Risques qualifiés",
+      "description": "<p>Les défauts confirmés sont priorisés selon leur exploitabilité, impact et exposition.</p>",
+      "type_etat": "validation",
+      "ordre": 120,
+      "type_contenu": "html",
+      "type_lien": "page_phase",
+      "cible_lien": "phases/05-remediation-suivi.html",
+      "libelle_lien": "Poursuivre vers la remédiation"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Trier_alertes",
+      "workflow_id": "Analyse_statique_code",
+      "etat_source_id": "Alertes_a_qualifier",
+      "etat_cible_id": "Faux_positifs_traites",
+      "libelle": "tri effectué",
+      "role_autorise": "SecOps",
+      "actif": true
+    },
+    {
+      "transition_id": "Qualifier_risques",
+      "workflow_id": "Analyse_statique_code",
+      "etat_source_id": "Faux_positifs_traites",
+      "etat_cible_id": "Risques_qualifies",
+      "libelle": "criticité validée",
+      "role_autorise": "SecOps",
+      "actif": true
+    },
+    {
+      "transition_id": "Passer_remediation",
+      "workflow_id": "Analyse_statique_code",
+      "etat_source_id": "Risques_qualifies",
+      "etat_cible_id": "Plan_remediation",
+      "libelle": "traitements décidés",
+      "role_autorise": "Responsable_application",
+      "actif": true
+    }
+  ],
+  "Regle": [
+    {
+      "regle_id": "R_Faux_positifs_justifies",
+      "workflow_id": "Analyse_statique_code",
+      "transition_id": "Qualifier_risques",
+      "etat_id": "Faux_positifs_traites",
+      "nom": "Faux positifs justifiés",
+      "expression": "Justification ET validateur ET date de révision présents",
+      "message_erreur": "Les exclusions non justifiées sont interdites.",
+      "bloquante": true
+    }
+  ]
+}

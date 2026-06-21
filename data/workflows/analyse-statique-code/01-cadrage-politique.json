@@ -1,0 +1,75 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Demande_analyse",
+      "workflow_id": "Analyse_statique_code",
+      "nom": "Demande d'analyse enregistrée",
+      "description": "<p>L'application, le commanditaire et l'objectif du contrôle sont identifiés.</p>",
+      "type_etat": "initial",
+      "ordre": 10,
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Perimetre_analyse",
+      "workflow_id": "Analyse_statique_code",
+      "nom": "Périmètre défini",
+      "description": "<p>Les dépôts, branches, langages, composants générés et exclusions justifiées sont recensés.</p>",
+      "type_etat": "normal",
+      "ordre": 20,
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Politique_analyse_validee",
+      "workflow_id": "Analyse_statique_code",
+      "nom": "Politique d'analyse validée",
+      "description": "<p>Les règles, niveaux de sévérité, seuils bloquants et responsabilités de traitement sont approuvés.</p>",
+      "type_etat": "validation",
+      "ordre": 30,
+      "type_contenu": "html",
+      "type_lien": "page_phase",
+      "cible_lien": "phases/02-preparation.html",
+      "libelle_lien": "Poursuivre vers la préparation technique"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Definir_perimetre",
+      "workflow_id": "Analyse_statique_code",
+      "etat_source_id": "Demande_analyse",
+      "etat_cible_id": "Perimetre_analyse",
+      "libelle": "demande qualifiée",
+      "role_autorise": "Responsable_application",
+      "actif": true
+    },
+    {
+      "transition_id": "Valider_politique_analyse",
+      "workflow_id": "Analyse_statique_code",
+      "etat_source_id": "Perimetre_analyse",
+      "etat_cible_id": "Politique_analyse_validee",
+      "libelle": "seuils approuvés",
+      "role_autorise": "SecOps",
+      "actif": true
+    },
+    {
+      "transition_id": "Passer_preparation_analyse",
+      "workflow_id": "Analyse_statique_code",
+      "etat_source_id": "Politique_analyse_validee",
+      "etat_cible_id": "Code_source_disponible",
+      "libelle": "politique applicable",
+      "role_autorise": "Responsable_application",
+      "actif": true
+    }
+  ],
+  "Regle": [
+    {
+      "regle_id": "R_Perimetre_explicite",
+      "workflow_id": "Analyse_statique_code",
+      "transition_id": "Valider_politique_analyse",
+      "etat_id": "Perimetre_analyse",
+      "nom": "Périmètre explicite",
+      "expression": "Dépôts ET branches ET langages ET exclusions documentés",
+      "message_erreur": "Le périmètre d'analyse est incomplet.",
+      "bloquante": true
+    }
+  ]
+}
