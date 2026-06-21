@@ -72,6 +72,7 @@ La documentation doit être mise à jour lorsqu'une modification concerne :
 - un format de contenu comme Markdown, HTML ou texte brut ;
 - une sortie destinée à MediaWiki.
 - une page HTML ou la structure du site statique.
+- un manifeste ou une entrée du catalogue de workflows.
 - une exigence, son implémentation ou sa couverture de test.
 
 ## Règles de contribution

@@ -29,7 +29,9 @@ from html_rendering import (
 from validate_workflow_data import DataValidationError, validate_source
 from workflow_data import (
     WorkflowDataError,
+    is_catalog,
     is_manifest,
+    load_catalog,
     load_json,
     load_manifest,
     site_config_from_manifest,
@@ -44,6 +46,11 @@ def phase_label(path: Path) -> str:
         "04-mise-en-production": "Mise en service",
         "05-maintenance": "Exploitation et maintenance",
         "06-decommissionnement": "Décommissionnement",
+        "01-cadrage-politique": "Cadrage et politique d'analyse",
+        "02-preparation": "Préparation technique",
+        "03-execution": "Exécution des analyses",
+        "04-qualification": "Qualification des résultats",
+        "05-remediation-suivi": "Remédiation et suivi",
     }
     stem = path.stem
     if stem in labels:
@@ -101,11 +108,21 @@ def load_phase_map(
     return phases
 
 
-def header(title: str, root_prefix: str = "") -> str:
+def header(
+    title: str,
+    root_prefix: str = "",
+    catalog_href: str | None = None,
+) -> str:
+    catalog_link = (
+        f'<a href="{escape(catalog_href)}">Choisir un workflow</a>'
+        if catalog_href
+        else ""
+    )
     return f"""\
 <header class="site-header">
   <h1><a href="{escape(root_prefix)}index.html">{escape(title)}</a></h1>
   <nav>
+    {catalog_link}
     <a href="{escape(root_prefix)}index.html">Vue d'ensemble et phases</a>
     <a href="{escape(root_prefix)}etats.html">Tous les états</a>
   </nav>
@@ -119,6 +136,7 @@ def render_index(
     detail_states: Sequence[Mapping[str, Any]],
     phases: Sequence[Mapping[str, Any]],
     mermaid_url: str,
+    catalog_href: str | None = None,
 ) -> str:
     phase_links = [(phase["label"], f'{phase["slug"]}.html') for phase in phases]
     flowchart = generate_dataset_flowchart(
@@ -141,7 +159,7 @@ def render_index(
         for phase in phases
     )
     body = f"""\
-{header(str(workflow["nom"]))}
+{header(str(workflow["nom"]), catalog_href=catalog_href)}
 <main class="layout">
   {render_sidebar(phase_links, detail_states, root_prefix="", show_states=False)}
   <div class="content">
@@ -165,6 +183,7 @@ def render_all_states_page(
     states: Sequence[Mapping[str, Any]],
     phases: Sequence[Mapping[str, Any]],
     mermaid_url: str,
+    catalog_href: str | None = None,
 ) -> str:
     phase_links = [(phase["label"], f'{phase["slug"]}.html') for phase in phases]
     cards = "".join(
@@ -172,7 +191,7 @@ def render_all_states_page(
         for state in states
     )
     body = f"""\
-{header(str(workflow["nom"]))}
+{header(str(workflow["nom"]), catalog_href=catalog_href)}
 <main class="layout">
   {render_sidebar(phase_links, states, root_prefix="")}
   <div class="content">
@@ -197,6 +216,7 @@ def render_phase_page(
     all_states: Sequence[Mapping[str, Any]],
     transitions: Sequence[Mapping[str, Any]],
     mermaid_url: str,
+    catalog_href: str | None = None,
 ) -> str:
     phase_states = phase["states"]
     phase_ids = {state["etat_id"] for state in phase_states}
@@ -222,7 +242,7 @@ def render_phase_page(
     )
     phase_links = [(item["label"], f'{item["slug"]}.html') for item in phases]
     body = f"""\
-{header(str(workflow["nom"]), "../")}
+{header(str(workflow["nom"]), "../", catalog_href)}
 <main class="layout">
   {render_sidebar(phase_links, all_states, root_prefix="../")}
   <div class="content">
@@ -255,6 +275,7 @@ def render_state_page(
     roles: Mapping[str, Mapping[str, Any]],
     phases: Sequence[Mapping[str, Any]],
     mermaid_url: str,
+    catalog_href: str | None = None,
 ) -> str:
     position = next(index for index, item in enumerate(states) if item == state)
     previous_state = states[position - 1] if position else None
@@ -321,7 +342,7 @@ def render_state_page(
         else ""
     )
     body = f"""\
-{header(str(workflow["nom"]), "../")}
+{header(str(workflow["nom"]), "../", catalog_href)}
 <main class="layout">
   {render_sidebar(phase_links, states, root_prefix="../")}
   <div class="content">
@@ -357,12 +378,13 @@ def render_state_page(
     )
 
 
-def generate_site(
+def generate_single_site(
     source: Path,
     output: Path,
     schema: Path | None = None,
     workflow_id: str | None = None,
     mermaid_url: str = DEFAULT_MERMAID_URL,
+    catalog_href: str | None = None,
 ) -> None:
     document = validate_source(source, schema)
     site_config = site_config_from_manifest(source)
@@ -396,6 +418,7 @@ def generate_site(
             states,
             phases,
             mermaid_url,
+            catalog_href,
         ),
     )
     write_text(
@@ -405,13 +428,20 @@ def generate_site(
             states,
             phases,
             mermaid_url,
+            catalog_href,
         ),
     )
     for phase in phases:
         write_text(
             output / "phases" / f'{phase["slug"]}.html',
             render_phase_page(
-                detail_workflow, phase, phases, states, transitions, mermaid_url
+                detail_workflow,
+                phase,
+                phases,
+                states,
+                transitions,
+                mermaid_url,
+                f"../{catalog_href}" if catalog_href else None,
             ),
         )
     for state in states:
@@ -426,8 +456,80 @@ def generate_site(
                 roles,
                 phases,
                 mermaid_url,
+                f"../{catalog_href}" if catalog_href else None,
             ),
         )
+
+
+def render_catalog_page(
+    title: str,
+    description: str,
+    entries: Sequence[Mapping[str, Any]],
+) -> str:
+    cards = "".join(
+        f"""\
+<article class="phase-card">
+  <h2><a href="{escape(entry["slug"])}/index.html">{escape(entry["label"])}</a></h2>
+  <p>{escape(entry.get("description", ""))}</p>
+  <p><a href="{escape(entry["slug"])}/index.html">Ouvrir le workflow →</a></p>
+</article>"""
+        for entry in entries
+    )
+    body = f"""\
+<header class="site-header"><h1>{escape(title)}</h1></header>
+<main class="layout">
+  <div class="content" style="grid-column: 1 / -1">
+    <section class="panel">
+      <h2>Choisir un workflow</h2>
+      <p>{escape(description)}</p>
+      <div class="phase-grid">{cards}</div>
+    </section>
+  </div>
+</main>"""
+    return page_shell(title=title, body=body)
+
+
+def generate_catalog_site(
+    source: Path,
+    output: Path,
+    mermaid_url: str = DEFAULT_MERMAID_URL,
+) -> None:
+    catalog, entries = load_catalog(source)
+    write_text(output / "assets" / "style.css", site_css() + "\n")
+    write_text(output / "assets" / "app.js", site_javascript(mermaid_url) + "\n")
+    write_text(
+        output / "index.html",
+        render_catalog_page(
+            str(catalog.get("title", "Workflows")),
+            str(catalog.get("description", "")),
+            entries,
+        ),
+    )
+    for entry in entries:
+        generate_single_site(
+            entry["manifest"],
+            output / entry["slug"],
+            mermaid_url=mermaid_url,
+            catalog_href="../index.html",
+        )
+
+
+def generate_site(
+    source: Path,
+    output: Path,
+    schema: Path | None = None,
+    workflow_id: str | None = None,
+    mermaid_url: str = DEFAULT_MERMAID_URL,
+) -> None:
+    source_document = load_json(source)
+    if is_catalog(source_document):
+        if schema is not None or workflow_id is not None:
+            raise WorkflowDataError(
+                "--schema et --workflow-id ne s'appliquent pas à un catalogue."
+            )
+        generate_catalog_site(source, output, mermaid_url)
+        return
+    generate_single_site(source, output, schema, workflow_id, mermaid_url)
 
 
 def build_argument_parser() -> argparse.ArgumentParser:

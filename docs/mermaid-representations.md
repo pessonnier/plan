@@ -239,6 +239,10 @@ flowchart TD
 Le site adapte les chemins relatifs selon que le diagramme se trouve à la
 racine ou dans le répertoire `phases`.
 
+Les workflows publiés par `data/workflows/catalog.json` définissent
+`Workflow.orientation = LR` afin d'afficher les phases et états
+horizontalement, de gauche à droite.
+
 Une modification des règles Mermaid doit donc être vérifiée dans les trois
 sorties :
 

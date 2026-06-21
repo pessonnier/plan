@@ -163,9 +163,17 @@ a { color: var(--accent); }
 .site-header nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: .5rem; }
 .layout { display: grid; grid-template-columns: minmax(14rem, 20rem) 1fr; gap: 1.5rem;
   max-width: 96rem; margin: 0 auto; padding: 1.5rem; }
+.layout.sidebar-collapsed { grid-template-columns: 3rem 1fr; }
+.sidebar-wrapper { min-width: 0; }
 .sidebar, .panel, .state-card, .phase-card { background: var(--surface);
   border: 1px solid var(--line); border-radius: .65rem; }
 .sidebar { padding: 1rem; align-self: start; position: sticky; top: 1rem; }
+.sidebar-toggle { width: 100%; margin-bottom: .5rem; padding: .45rem .6rem;
+  border: 1px solid var(--line); border-radius: .45rem; background: var(--surface);
+  color: var(--accent); cursor: pointer; font: inherit; font-size: 1.1rem;
+  font-weight: 700; }
+.sidebar-toggle:hover, .sidebar-toggle:focus-visible { background: var(--accent-soft); }
+.layout.sidebar-collapsed .sidebar { display: none; }
 .sidebar ul { list-style: none; padding: 0; margin: .5rem 0; }
 .sidebar li { margin: .35rem 0; }
 .content { min-width: 0; }
@@ -192,6 +200,8 @@ a { color: var(--accent); }
 footer { color: var(--muted); padding: 1.5rem; text-align: center; }
 @media (max-width: 760px) {
   .layout { grid-template-columns: 1fr; padding: .75rem; }
+  .layout.sidebar-collapsed { grid-template-columns: 1fr; }
+  .layout.sidebar-collapsed .sidebar-wrapper { width: 3rem; }
   .sidebar { position: static; }
   .mermaid { min-width: 38rem; }
 }"""
@@ -200,6 +210,38 @@ footer { color: var(--muted); padding: 1.5rem; text-align: center; }
 def site_javascript(mermaid_url: str = DEFAULT_MERMAID_URL) -> str:
     return f"""\
 (async () => {{
+  const storageKey = "workflow-navigation-collapsed";
+  document.querySelectorAll("[data-sidebar-toggle]").forEach((button) => {{
+    const layout = button.closest(".layout");
+    if (!layout) {{
+      return;
+    }}
+    const applyState = (collapsed) => {{
+      layout.classList.toggle("sidebar-collapsed", collapsed);
+      button.setAttribute("aria-expanded", String(!collapsed));
+      const label = collapsed ? "Afficher la navigation" : "Masquer la navigation";
+      button.textContent = "☰";
+      button.setAttribute("aria-label", label);
+      button.setAttribute("title", label);
+    }};
+    let collapsed = false;
+    try {{
+      collapsed = localStorage.getItem(storageKey) === "true";
+    }} catch (error) {{
+      console.debug("Préférence de navigation non persistée", error);
+    }}
+    applyState(collapsed);
+    button.addEventListener("click", () => {{
+      const nextState = !layout.classList.contains("sidebar-collapsed");
+      applyState(nextState);
+      try {{
+        localStorage.setItem(storageKey, String(nextState));
+      }} catch (error) {{
+        console.debug("Préférence de navigation non persistée", error);
+      }}
+    }});
+  }});
+
   const nodes = document.querySelectorAll(".mermaid");
   if (nodes.length) {{
     try {{
@@ -343,8 +385,15 @@ def render_sidebar(
         else ""
     )
     return f"""\
-<aside class="sidebar">
-  <strong>Phases</strong>
-  <ul>{phase_items}</ul>
+<div class="sidebar-wrapper">
+  <button class="sidebar-toggle" type="button" data-sidebar-toggle
+    aria-expanded="true" aria-controls="workflow-sidebar"
+    aria-label="Masquer la navigation" title="Masquer la navigation">
+    ☰
+  </button>
+  <aside class="sidebar" id="workflow-sidebar">
+    <strong>Phases</strong>
+    <ul>{phase_items}</ul>
 {state_section}
-</aside>"""
+  </aside>
+</div>"""

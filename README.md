@@ -60,17 +60,17 @@ Un site statique navigable :
 
 ```powershell
 py scripts/generate_workflow_site.py `
-  data/workflows/projet-informatique/manifest.json `
-  --output build/site-projet-informatique
+  data/workflows/catalog.json `
+  --output build/site-workflows
 ```
 
 Consulter `docs/html-site-generation.md` pour la structure des sorties, la
 navigation, la sécurité des descriptions HTML et la configuration de Mermaid.
 
-La page `index.html` fusionne la vue générale et le diagramme des phases.
-Chaque noeud ouvre le diagramme détaillé correspondant. L'onglet
-`Tous les états` mène à `etats.html`. Les états terminaux d'une phase peuvent
-pointer vers la page de la phase suivante.
+La page d'accueil permet de choisir entre les workflows « Projet
+informatique » et « Analyse statique de code ». Dans chaque workflow,
+`index.html` fusionne la vue générale et le diagramme des phases. L'onglet
+`Tous les états` mène à `etats.html`.
 
 ## Tests et traçabilité
 

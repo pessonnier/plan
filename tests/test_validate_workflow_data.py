@@ -16,6 +16,13 @@ import workflow_data
 MANIFEST = (
     PROJECT_ROOT / "data" / "workflows" / "projet-informatique" / "manifest.json"
 )
+STATIC_ANALYSIS_MANIFEST = (
+    PROJECT_ROOT
+    / "data"
+    / "workflows"
+    / "analyse-statique-code"
+    / "manifest.json"
+)
 SCHEMA = PROJECT_ROOT / "schema" / "workflow-model.json"
 
 
@@ -141,6 +148,35 @@ class ValidateWorkflowDataTests(unittest.TestCase):
             r"doit pointer vers phases/\*\.html",
         ):
             validate_workflow_data.validate_business_consistency(invalid)
+
+    def test_static_analysis_workflow_is_complete_and_reachable(self):
+        document = validate_workflow_data.validate_source(STATIC_ANALYSIS_MANIFEST)
+        states = [
+            state
+            for state in document["Etat"]
+            if state["workflow_id"] == "Analyse_statique_code"
+        ]
+        transitions = [
+            transition
+            for transition in document["Transition"]
+            if transition["workflow_id"] == "Analyse_statique_code"
+            and transition["actif"] is True
+        ]
+        reachable = {"Demande_analyse"}
+        changed = True
+        while changed:
+            changed = False
+            for transition in transitions:
+                if (
+                    transition["etat_source_id"] in reachable
+                    and transition["etat_cible_id"] not in reachable
+                ):
+                    reachable.add(transition["etat_cible_id"])
+                    changed = True
+
+        self.assertEqual(16, len(states))
+        self.assertEqual({state["etat_id"] for state in states}, reachable)
+        self.assertIn("Analyse_cloturee", reachable)
 
     def test_unknown_field_breaks_model_compatibility(self):
         document = workflow_data.load_data_source(MANIFEST)

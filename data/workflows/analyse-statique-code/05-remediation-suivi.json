@@ -1,0 +1,90 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Plan_remediation",
+      "workflow_id": "Analyse_statique_code",
+      "nom": "Plan de remédiation",
+      "description": "<p>Chaque risque confirmé reçoit un traitement, un responsable et une échéance.</p>",
+      "type_etat": "normal",
+      "ordre": 130,
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Corrections_realisees",
+      "workflow_id": "Analyse_statique_code",
+      "nom": "Corrections réalisées",
+      "description": "<p>Les correctifs sont revus, testés et associés aux alertes traitées.</p>",
+      "type_etat": "normal",
+      "ordre": 140,
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Recontrole",
+      "workflow_id": "Analyse_statique_code",
+      "nom": "Recontrôle effectué",
+      "description": "<p>Une nouvelle analyse confirme la disparition des défauts ou la stabilité des dérogations.</p>",
+      "type_etat": "validation",
+      "ordre": 150,
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Analyse_cloturee",
+      "workflow_id": "Analyse_statique_code",
+      "nom": "Analyse clôturée",
+      "description": "<p>Les risques résiduels sont acceptés, les preuves archivées et les indicateurs publiés.</p>",
+      "type_etat": "final",
+      "ordre": 160,
+      "type_contenu": "html"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Planifier_remediation",
+      "workflow_id": "Analyse_statique_code",
+      "etat_source_id": "Plan_remediation",
+      "etat_cible_id": "Corrections_realisees",
+      "libelle": "traitements réalisés",
+      "role_autorise": "Equipe_dev",
+      "actif": true
+    },
+    {
+      "transition_id": "Recontroler_corrections",
+      "workflow_id": "Analyse_statique_code",
+      "etat_source_id": "Corrections_realisees",
+      "etat_cible_id": "Recontrole",
+      "libelle": "nouvelle analyse conforme",
+      "role_autorise": "CI_CD",
+      "actif": true
+    },
+    {
+      "transition_id": "Clore_analyse",
+      "workflow_id": "Analyse_statique_code",
+      "etat_source_id": "Recontrole",
+      "etat_cible_id": "Analyse_cloturee",
+      "libelle": "risques résiduels acceptés",
+      "role_autorise": "Responsable_application",
+      "actif": true
+    },
+    {
+      "transition_id": "Reouvrir_remediation",
+      "workflow_id": "Analyse_statique_code",
+      "etat_source_id": "Recontrole",
+      "etat_cible_id": "Plan_remediation",
+      "libelle": "défauts persistants",
+      "role_autorise": "SecOps",
+      "actif": true
+    }
+  ],
+  "Regle": [
+    {
+      "regle_id": "R_Cloture_analyse",
+      "workflow_id": "Analyse_statique_code",
+      "transition_id": "Clore_analyse",
+      "etat_id": "Recontrole",
+      "nom": "Clôture contrôlée",
+      "expression": "Aucun risque bloquant ouvert ET dérogations approuvées",
+      "message_erreur": "L'analyse conserve des risques non traités.",
+      "bloquante": true
+    }
+  ]
+}

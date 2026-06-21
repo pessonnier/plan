@@ -35,12 +35,24 @@ La page `index.html` regroupe la présentation générale et le diagramme des
 phases. Une page `etats.html` présente tous les états détaillés et permet
 d'accéder à leur page individuelle.
 
+Les pages qui affichent une navigation latérale doivent proposer un mécanisme
+accessible permettant de la masquer et de la réafficher. Le choix de
+l'utilisateur doit être conservé entre les pages lorsque le navigateur permet
+l'utilisation de `localStorage`.
+
 ## REQ-LINK-001 — Navigation portée par les données
 
 Les tables `Etat` et `Transition` doivent pouvoir définir un lien typé vers une
 page de phase, une page d'état ou une URL HTTP(S). Le workflow directeur doit
 relier chaque phase à sa page détaillée. Dans un diagramme de phase, l'état
 terminal doit pointer vers la page de la phase suivante.
+
+## REQ-CATALOG-001 — Choix entre plusieurs workflows
+
+Le générateur de site doit accepter un catalogue référençant plusieurs
+manifestes. La page d'accueil du catalogue présente chaque workflow et permet
+de l'ouvrir. Chaque sous-site doit proposer un lien de retour vers le choix des
+workflows.
 
 ## REQ-SEC-001 — Filtrage du HTML métier
 

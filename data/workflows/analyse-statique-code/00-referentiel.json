@@ -1,0 +1,48 @@
+{
+  "Workflow": [
+    {
+      "workflow_id": "Phases_analyse_statique",
+      "nom": "Phases de l'analyse statique de code",
+      "description": "Vue directrice d'une campagne d'analyse statique intégrée à la gouvernance qualité et sécurité du développement.",
+      "type_diagramme": "flowchart",
+      "orientation": "LR",
+      "actif": true
+    },
+    {
+      "workflow_id": "Analyse_statique_code",
+      "nom": "Analyse statique de code",
+      "description": "Workflow détaillé de préparation, exécution, qualification et remédiation des résultats d'analyse statique.",
+      "type_diagramme": "flowchart",
+      "orientation": "LR",
+      "actif": false
+    }
+  ],
+  "Role": [
+    {
+      "role_id": "Responsable_application",
+      "nom": "Responsable d'application",
+      "description": "Porte le périmètre, les arbitrages et l'acceptation des risques."
+    },
+    {
+      "role_id": "Equipe_dev",
+      "nom": "Équipe de développement",
+      "description": "Prépare le code, corrige les défauts et justifie les exceptions."
+    },
+    {
+      "role_id": "SecOps",
+      "nom": "Équipe sécurité applicative",
+      "description": "Définit la politique, qualifie les vulnérabilités et suit les risques."
+    },
+    {
+      "role_id": "Qualite",
+      "nom": "Qualité logicielle",
+      "description": "Contrôle la reproductibilité, la couverture et les seuils qualité."
+    },
+    {
+      "role_id": "CI_CD",
+      "nom": "Plateforme CI/CD",
+      "description": "Exécute les outils et conserve les résultats techniques."
+    }
+  ],
+  "Generation_Mermaid": []
+}

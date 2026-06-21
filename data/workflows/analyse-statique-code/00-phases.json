@@ -1,0 +1,93 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Phase_Cadrage_analyse",
+      "workflow_id": "Phases_analyse_statique",
+      "nom": "1. Cadrage et politique d'analyse",
+      "description": "<p>Le périmètre, les responsabilités, les référentiels et les seuils bloquants sont décidés.</p>",
+      "type_etat": "initial",
+      "ordre": 10,
+      "type_lien": "page_phase",
+      "cible_lien": "phases/01-cadrage-politique.html",
+      "libelle_lien": "Ouvrir le cadrage de l'analyse"
+    },
+    {
+      "etat_id": "Phase_Preparation_analyse",
+      "workflow_id": "Phases_analyse_statique",
+      "nom": "2. Préparation technique",
+      "description": "<p>Le code, la construction, les dépendances et les outils sont rendus analysables de façon reproductible.</p>",
+      "type_etat": "normal",
+      "ordre": 20,
+      "type_lien": "page_phase",
+      "cible_lien": "phases/02-preparation.html",
+      "libelle_lien": "Ouvrir la préparation technique"
+    },
+    {
+      "etat_id": "Phase_Execution_analyse",
+      "workflow_id": "Phases_analyse_statique",
+      "nom": "3. Exécution des analyses",
+      "description": "<p>Les outils sont exécutés, les journaux conservés et les résultats consolidés.</p>",
+      "type_etat": "normal",
+      "ordre": 30,
+      "type_lien": "page_phase",
+      "cible_lien": "phases/03-execution.html",
+      "libelle_lien": "Ouvrir l'exécution des analyses"
+    },
+    {
+      "etat_id": "Phase_Qualification_resultats",
+      "workflow_id": "Phases_analyse_statique",
+      "nom": "4. Qualification des résultats",
+      "description": "<p>Les alertes sont dédupliquées, qualifiées et priorisées selon le risque.</p>",
+      "type_etat": "validation",
+      "ordre": 40,
+      "type_lien": "page_phase",
+      "cible_lien": "phases/04-qualification.html",
+      "libelle_lien": "Ouvrir la qualification"
+    },
+    {
+      "etat_id": "Phase_Remediation_suivi",
+      "workflow_id": "Phases_analyse_statique",
+      "nom": "5. Remédiation et suivi",
+      "description": "<p>Les corrections, dérogations, recontrôles et décisions de clôture sont tracés.</p>",
+      "type_etat": "final",
+      "ordre": 50,
+      "type_lien": "page_phase",
+      "cible_lien": "phases/05-remediation-suivi.html",
+      "libelle_lien": "Ouvrir la remédiation et le suivi"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Phase_vers_preparation",
+      "workflow_id": "Phases_analyse_statique",
+      "etat_source_id": "Phase_Cadrage_analyse",
+      "etat_cible_id": "Phase_Preparation_analyse",
+      "libelle": "politique approuvée",
+      "actif": true
+    },
+    {
+      "transition_id": "Phase_vers_execution",
+      "workflow_id": "Phases_analyse_statique",
+      "etat_source_id": "Phase_Preparation_analyse",
+      "etat_cible_id": "Phase_Execution_analyse",
+      "libelle": "environnement prêt",
+      "actif": true
+    },
+    {
+      "transition_id": "Phase_vers_qualification",
+      "workflow_id": "Phases_analyse_statique",
+      "etat_source_id": "Phase_Execution_analyse",
+      "etat_cible_id": "Phase_Qualification_resultats",
+      "libelle": "résultats disponibles",
+      "actif": true
+    },
+    {
+      "transition_id": "Phase_vers_remediation",
+      "workflow_id": "Phases_analyse_statique",
+      "etat_source_id": "Phase_Qualification_resultats",
+      "etat_cible_id": "Phase_Remediation_suivi",
+      "libelle": "risques qualifiés",
+      "actif": true
+    }
+  ]
+}

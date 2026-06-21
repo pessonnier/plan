@@ -1,0 +1,19 @@
+{
+  "format": "workflow-site-catalog-v1",
+  "title": "Catalogue des workflows",
+  "description": "Choisissez le workflow à consulter.",
+  "workflows": [
+    {
+      "slug": "projet-informatique",
+      "manifest": "projet-informatique/manifest.json",
+      "label": "Projet informatique",
+      "description": "Gouvernance complète d'un projet informatique, du cadrage au décommissionnement."
+    },
+    {
+      "slug": "analyse-statique-code",
+      "manifest": "analyse-statique-code/manifest.json",
+      "label": "Analyse statique de code",
+      "description": "Organisation d'une campagne d'analyse statique, de la politique de contrôle à la remédiation."
+    }
+  ]
+}

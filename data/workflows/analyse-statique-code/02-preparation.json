@@ -1,0 +1,75 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Code_source_disponible",
+      "workflow_id": "Analyse_statique_code",
+      "nom": "Code source disponible",
+      "description": "<p>La révision à analyser est figée et accessible au système d'analyse.</p>",
+      "type_etat": "normal",
+      "ordre": 40,
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Construction_reproductible",
+      "workflow_id": "Analyse_statique_code",
+      "nom": "Construction reproductible",
+      "description": "<p>Les dépendances, générateurs et paramètres de compilation sont maîtrisés.</p>",
+      "type_etat": "normal",
+      "ordre": 50,
+      "type_contenu": "html"
+    },
+    {
+      "etat_id": "Outils_configures",
+      "workflow_id": "Analyse_statique_code",
+      "nom": "Outils configurés",
+      "description": "<p>Les analyseurs, profils de règles, exclusions et formats de rapport sont versionnés.</p>",
+      "type_etat": "validation",
+      "ordre": 60,
+      "type_contenu": "html",
+      "type_lien": "page_phase",
+      "cible_lien": "phases/03-execution.html",
+      "libelle_lien": "Poursuivre vers l'exécution"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Preparer_code",
+      "workflow_id": "Analyse_statique_code",
+      "etat_source_id": "Code_source_disponible",
+      "etat_cible_id": "Construction_reproductible",
+      "libelle": "construction vérifiée",
+      "role_autorise": "Equipe_dev",
+      "actif": true
+    },
+    {
+      "transition_id": "Configurer_outils",
+      "workflow_id": "Analyse_statique_code",
+      "etat_source_id": "Construction_reproductible",
+      "etat_cible_id": "Outils_configures",
+      "libelle": "configuration contrôlée",
+      "role_autorise": "Qualite",
+      "actif": true
+    },
+    {
+      "transition_id": "Passer_execution_analyse",
+      "workflow_id": "Analyse_statique_code",
+      "etat_source_id": "Outils_configures",
+      "etat_cible_id": "Analyse_lancee",
+      "libelle": "campagne prête",
+      "role_autorise": "CI_CD",
+      "actif": true
+    }
+  ],
+  "Regle": [
+    {
+      "regle_id": "R_Configuration_versionnee",
+      "workflow_id": "Analyse_statique_code",
+      "transition_id": "Configurer_outils",
+      "etat_id": "Construction_reproductible",
+      "nom": "Configuration versionnée",
+      "expression": "Versions outils ET règles ET exclusions enregistrées",
+      "message_erreur": "La configuration d'analyse doit être reproductible.",
+      "bloquante": true
+    }
+  ]
+}

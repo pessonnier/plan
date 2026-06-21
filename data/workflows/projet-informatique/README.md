@@ -50,6 +50,6 @@ Site statique :
 
 ```powershell
 py scripts/generate_workflow_site.py `
-  data/workflows/projet-informatique/manifest.json `
-  --output build/site-projet-informatique
+  data/workflows/catalog.json `
+  --output build/site-workflows
 ```

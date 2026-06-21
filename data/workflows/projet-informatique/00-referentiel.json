@@ -5,7 +5,7 @@
       "nom": "Phases d'un projet informatique",
       "description": "Vue directrice d'un projet informatique fondée sur les jalons de gouvernance, de commande publique, de mise en service, d'exploitation et de retrait.",
       "type_diagramme": "flowchart",
-      "orientation": "TD",
+      "orientation": "LR",
       "actif": true
     },
     {
@@ -13,7 +13,7 @@
       "nom": "Réalisation et cycle de vie d'un projet informatique",
       "description": "Workflow de gouvernance couvrant l'opportunité, le budget, les spécifications, le marché, la réalisation, la mise en production, la maintenance et le décommissionnement.",
       "type_diagramme": "flowchart",
-      "orientation": "TD",
+      "orientation": "LR",
       "actif": false
     }
   ],

@@ -5,6 +5,10 @@ Le projet fournit deux générateurs HTML à partir d'un jeu de données validé
 - `scripts/generate_workflow_html.py` produit une page HTML unique ;
 - `scripts/generate_workflow_site.py` produit un site statique navigable.
 
+Le générateur de site accepte aussi un catalogue
+`workflow-site-catalog-v1`, qui produit une page de choix et un sous-site par
+workflow.
+
 Les deux commandes acceptent un fichier de données complet ou un manifeste
 `workflow-data-manifest-v1`. Elles valident systématiquement les données contre
 `schema/workflow-model.json` avant de produire une sortie.
@@ -51,10 +55,18 @@ La vue d'ensemble est produite depuis le workflow désigné par
 `site.overview_workflow_id`. Les pages de phase et d'état utilisent
 `site.detail_workflow_id`.
 
+L'orientation des diagrammes vient de `Workflow.orientation`. Les workflows du
+catalogue utilisent `LR` pour une lecture horizontale.
+
 La navigation principale contient deux entrées :
 
 - `Vue d'ensemble et phases` ;
 - `Tous les états`.
+
+La navigation latérale peut être masquée ou réaffichée avec le bouton `☰`.
+Son infobulle et son libellé accessible indiquent l'action disponible. La
+préférence est enregistrée dans `localStorage` sous la clé
+`workflow-navigation-collapsed` et s'applique aux autres pages du site.
 
 L'ancienne page `workflow.html` n'est plus générée et est supprimée du
 répertoire de sortie lors d'une nouvelle génération.
@@ -72,9 +84,27 @@ Exemple :
 
 ```powershell
 py scripts/generate_workflow_site.py `
-  data/workflows/projet-informatique/manifest.json `
-  --output build/site-projet-informatique
+  data/workflows/catalog.json `
+  --output build/site-workflows
 ```
+
+Le catalogue contient des entrées de la forme :
+
+```json
+{
+  "format": "workflow-site-catalog-v1",
+  "workflows": [
+    {
+      "slug": "projet-informatique",
+      "manifest": "projet-informatique/manifest.json",
+      "label": "Projet informatique"
+    }
+  ]
+}
+```
+
+Chaque workflow est généré dans `<slug>/`. Un lien « Choisir un workflow »
+permet de revenir au catalogue depuis toutes les pages du sous-site.
 
 Le site peut ensuite être publié par n'importe quel serveur de fichiers
 statiques. L'ouverture directe de `index.html` permet également de parcourir

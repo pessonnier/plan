@@ -199,3 +199,16 @@ Règles du format :
 
 Le jeu de travail `data/workflows/projet-informatique/manifest.json` illustre
 ce format.
+
+## Catalogue de workflows
+
+`data/workflows/catalog.json` référence les manifestes publiés dans un même
+site. Ce catalogue ne modifie pas le modèle Grist : il organise seulement la
+publication statique.
+
+Chaque entrée définit :
+
+- un `slug` unique utilisé comme répertoire ;
+- le chemin du `manifest` ;
+- un `label` affiché à l'utilisateur ;
+- une `description` facultative.

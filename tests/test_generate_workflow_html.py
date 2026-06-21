@@ -16,6 +16,7 @@ import html_rendering
 MANIFEST = (
     PROJECT_ROOT / "data" / "workflows" / "projet-informatique" / "manifest.json"
 )
+CATALOG = PROJECT_ROOT / "data" / "workflows" / "catalog.json"
 
 
 class LinkCollector(HTMLParser):
@@ -35,7 +36,7 @@ class GenerateWorkflowHtmlTests(unittest.TestCase):
     def test_single_page_contains_flowchart_then_phase_descriptions(self):
         page = generate_workflow_html.render_workflow_page(MANIFEST)
 
-        flowchart_position = page.index("flowchart TD")
+        flowchart_position = page.index("flowchart LR")
         descriptions_position = page.index("Description des états")
         first_description_position = page.index(
             "La personne publique ou l&#x27;organisation qualifie le besoin"
@@ -100,10 +101,15 @@ class GenerateWorkflowHtmlTests(unittest.TestCase):
                 output / "phases" / "01-cadrage-budgetisation.html"
             ).read_text(encoding="utf-8")
             self.assertIn("Vue d&#x27;ensemble des phases", index)
+            self.assertIn("flowchart LR", index)
             self.assertIn("Tous les états", all_states)
             self.assertIn("states/Decommissionne.html", all_states)
             self.assertNotIn("<strong>États</strong>", index)
             self.assertIn("<strong>États</strong>", all_states)
+            self.assertIn('data-sidebar-toggle', index)
+            self.assertIn('aria-controls="workflow-sidebar"', index)
+            self.assertIn('aria-label="Masquer la navigation"', index)
+            self.assertIn("☰", index)
             self.assertNotIn("<dt>Workflow</dt>", index)
             self.assertNotIn("<dt>États détaillés</dt>", index)
             self.assertNotIn("<dt>Phases</dt>", index)
@@ -161,7 +167,48 @@ class GenerateWorkflowHtmlTests(unittest.TestCase):
             self.assertIn("(async () => {", script)
             self.assertIn("await import(", script)
             self.assertIn('securityLevel: "loose"', script)
+            self.assertIn("workflow-navigation-collapsed", script)
+            self.assertIn('localStorage.setItem(storageKey', script)
+            self.assertIn('classList.toggle("sidebar-collapsed"', script)
+            self.assertIn('button.textContent = "☰"', script)
+            self.assertIn('button.setAttribute("title", label)', script)
             self.assertIn('dataset.mermaidRendered = "true"', script)
+
+    def test_catalog_generates_workflow_choice_and_two_sites(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "catalog"
+
+            generate_workflow_site.generate_site(CATALOG, output)
+
+            portal = (output / "index.html").read_text(encoding="utf-8")
+            self.assertIn("Projet informatique", portal)
+            self.assertIn("Analyse statique de code", portal)
+            self.assertIn("projet-informatique/index.html", portal)
+            self.assertIn("analyse-statique-code/index.html", portal)
+            self.assertTrue((output / "projet-informatique" / "etats.html").is_file())
+            self.assertTrue(
+                (output / "analyse-statique-code" / "etats.html").is_file()
+            )
+            analysis_index = (
+                output / "analyse-statique-code" / "index.html"
+            ).read_text(encoding="utf-8")
+            analysis_states = list(
+                (output / "analyse-statique-code" / "states").glob("*.html")
+            )
+            self.assertIn("Choisir un workflow", analysis_index)
+            self.assertIn("flowchart LR", analysis_index)
+            self.assertIn("../index.html", analysis_index)
+            self.assertEqual(16, len(analysis_states))
+
+            for page_path in output.glob("**/*.html"):
+                collector = LinkCollector()
+                collector.feed(page_path.read_text(encoding="utf-8"))
+                for href in collector.links:
+                    if "://" in href or href.startswith(("mailto:", "#")):
+                        continue
+                    target = (page_path.parent / href.split("#", 1)[0]).resolve()
+                    with self.subTest(page=page_path, href=href):
+                        self.assertTrue(target.is_file())
 
 
 if __name__ == "__main__":

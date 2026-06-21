@@ -8,6 +8,7 @@ from typing import Any, Mapping
 
 
 MANIFEST_FORMAT = "workflow-data-manifest-v1"
+CATALOG_FORMAT = "workflow-site-catalog-v1"
 
 
 class WorkflowDataError(ValueError):
@@ -33,6 +34,50 @@ def is_manifest(document: Any) -> bool:
         and document.get("format") == MANIFEST_FORMAT
         and isinstance(document.get("files"), list)
     )
+
+
+def is_catalog(document: Any) -> bool:
+    return (
+        isinstance(document, Mapping)
+        and document.get("format") == CATALOG_FORMAT
+        and isinstance(document.get("workflows"), list)
+    )
+
+
+def load_catalog(catalog_path: Path) -> tuple[Mapping[str, Any], list[dict[str, Any]]]:
+    catalog = load_json(catalog_path)
+    if not is_catalog(catalog):
+        raise WorkflowDataError(
+            f"Catalogue invalide dans {catalog_path}: format attendu "
+            f"{CATALOG_FORMAT!r}."
+        )
+    entries = catalog["workflows"]
+    if not entries:
+        raise WorkflowDataError("Le catalogue doit contenir au moins un workflow.")
+    loaded: list[dict[str, Any]] = []
+    seen_slugs: set[str] = set()
+    for index, entry in enumerate(entries):
+        if not isinstance(entry, Mapping):
+            raise WorkflowDataError(f"workflows[{index}] doit être un objet.")
+        slug = entry.get("slug")
+        manifest = entry.get("manifest")
+        label = entry.get("label")
+        if not all(isinstance(value, str) and value for value in (slug, manifest, label)):
+            raise WorkflowDataError(
+                f"workflows[{index}] doit définir slug, manifest et label."
+            )
+        if slug in seen_slugs:
+            raise WorkflowDataError(f"Slug de workflow dupliqué: {slug}.")
+        seen_slugs.add(slug)
+        loaded.append(
+            {
+                "slug": slug,
+                "manifest": (catalog_path.parent / manifest).resolve(),
+                "label": label,
+                "description": str(entry.get("description", "")),
+            }
+        )
+    return catalog, loaded
 
 
 def load_manifest(manifest_path: Path) -> tuple[dict[str, list[Any]], list[Path]]:

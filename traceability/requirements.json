@@ -96,6 +96,21 @@
       ]
     },
     {
+      "id": "REQ-CATALOG-001",
+      "specification": "docs/specifications.md",
+      "code": [
+        "scripts/workflow_data.py::load_catalog",
+        "scripts/generate_workflow_site.py::generate_catalog_site",
+        "scripts/generate_workflow_site.py::render_catalog_page"
+      ],
+      "unit_tests": [
+        "tests/test_generate_workflow_html.py::GenerateWorkflowHtmlTests.test_catalog_generates_workflow_choice_and_two_sites"
+      ],
+      "functional_tests": [
+        "tests/functional/test_cli_workflows.py::WorkflowCliFunctionalTests.test_catalog_site_cli_end_to_end"
+      ]
+    },
+    {
       "id": "REQ-TRACE-001",
       "specification": "docs/specifications.md",
       "code": [
