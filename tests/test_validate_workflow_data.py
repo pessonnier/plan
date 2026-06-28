@@ -190,6 +190,56 @@ class ValidateWorkflowDataTests(unittest.TestCase):
         ):
             validate_workflow_data.validate_records_against_schema(invalid, schema)
 
+    def test_invalid_schema_values_are_rejected(self):
+        document = workflow_data.load_data_source(MANIFEST)
+        schema = workflow_data.load_json(SCHEMA)
+        cases = [
+            (
+                "required field",
+                lambda invalid: invalid["Workflow"][0].pop("nom"),
+                "champ obligatoire manquant nom",
+            ),
+            (
+                "boolean type",
+                lambda invalid: invalid["Workflow"][0].update(actif="oui"),
+                "valeur incompatible avec le type boolean",
+            ),
+            (
+                "choice value",
+                lambda invalid: invalid["Workflow"][0].update(orientation="XX"),
+                "absente des choix autorisés",
+            ),
+            (
+                "Mermaid identifier",
+                lambda invalid: invalid["Etat"][0].update(etat_id="État invalide"),
+                "identifiant incompatible avec Mermaid",
+            ),
+        ]
+
+        for label, mutate, expected_error in cases:
+            with self.subTest(case=label):
+                invalid = copy.deepcopy(document)
+                mutate(invalid)
+                with self.assertRaisesRegex(
+                    validate_workflow_data.DataValidationError,
+                    expected_error,
+                ):
+                    validate_workflow_data.validate_records_against_schema(
+                        invalid, schema
+                    )
+
+    def test_duplicate_identifier_is_rejected(self):
+        document = workflow_data.load_data_source(MANIFEST)
+        invalid = copy.deepcopy(document)
+        invalid["Etat"][1]["etat_id"] = invalid["Etat"][0]["etat_id"]
+        schema = workflow_data.load_json(SCHEMA)
+
+        with self.assertRaisesRegex(
+            validate_workflow_data.DataValidationError,
+            "identifiant dupliqué",
+        ):
+            validate_workflow_data.validate_references(invalid, schema)
+
     def test_missing_cross_fragment_reference_is_rejected(self):
         document = workflow_data.load_data_source(MANIFEST)
         invalid = copy.deepcopy(document)
@@ -202,6 +252,24 @@ class ValidateWorkflowDataTests(unittest.TestCase):
             "référence introuvable",
         ):
             validate_workflow_data.validate_references(invalid, schema)
+
+    def test_transition_between_different_workflows_is_rejected(self):
+        document = workflow_data.load_data_source(MANIFEST)
+        invalid = copy.deepcopy(document)
+        transition = invalid["Transition"][0]
+        transition["workflow_id"] = next(
+            workflow["workflow_id"]
+            for workflow in invalid["Workflow"]
+            if workflow["workflow_id"] != transition["workflow_id"]
+        )
+        schema = workflow_data.load_json(SCHEMA)
+
+        validate_workflow_data.validate_references(invalid, schema)
+        with self.assertRaisesRegex(
+            validate_workflow_data.DataValidationError,
+            "relie des états appartenant à un autre workflow",
+        ):
+            validate_workflow_data.validate_business_consistency(invalid)
 
 
 if __name__ == "__main__":
