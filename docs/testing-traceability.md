@@ -59,6 +59,8 @@ Les tests unitaires sont placés directement dans `tests/`. Ils vérifient les
 fonctions Python sans lancer une commande externe, notamment :
 
 - validation du modèle et des références ;
+- rejet des champs obligatoires absents, types et choix invalides, identifiants
+  dupliqués et références incohérentes entre workflows ;
 - règles de génération Mermaid ;
 - filtrage du HTML ;
 - structure et liens des pages générées ;

@@ -11,10 +11,14 @@
       ],
       "unit_tests": [
         "tests/test_validate_workflow_data.py::ValidateWorkflowDataTests.test_all_fragmented_workflow_datasets_match_model",
+        "tests/test_validate_workflow_data.py::ValidateWorkflowDataTests.test_invalid_schema_values_are_rejected",
+        "tests/test_validate_workflow_data.py::ValidateWorkflowDataTests.test_duplicate_identifier_is_rejected",
+        "tests/test_validate_workflow_data.py::ValidateWorkflowDataTests.test_transition_between_different_workflows_is_rejected",
         "tests/test_validate_workflow_data.py::ValidateWorkflowDataTests.test_missing_cross_fragment_reference_is_rejected"
       ],
       "functional_tests": [
-        "tests/functional/test_cli_workflows.py::WorkflowCliFunctionalTests.test_validate_data_cli"
+        "tests/functional/test_cli_workflows.py::WorkflowCliFunctionalTests.test_validate_data_cli",
+        "tests/functional/test_cli_workflows.py::WorkflowCliFunctionalTests.test_validate_data_cli_rejects_dangling_reference"
       ]
     },
     {

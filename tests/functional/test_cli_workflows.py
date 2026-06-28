@@ -39,6 +39,22 @@ class WorkflowCliFunctionalTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertIn("Compatibilité validée: 6 tables, 108 enregistrements.", result.stdout)
 
+    def test_validate_data_cli_rejects_dangling_reference(self):
+        data = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+        data["Transition"][0]["etat_cible_id"] = "Etat_absent"
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / "invalid-reference.json"
+            source.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+            result = self.run_cli(
+                "validate_workflow_data.py",
+                source,
+                "--schema",
+                SCHEMA,
+            )
+
+        self.assertEqual(2, result.returncode)
+        self.assertIn("référence introuvable", result.stderr)
+
     def test_mermaid_cli_end_to_end(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "workflow.md"
