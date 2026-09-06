@@ -65,6 +65,7 @@ fonctions Python sans lancer une commande externe, notamment :
 - filtrage du HTML ;
 - structure et liens des pages générées ;
 - cohérence de la matrice de traçabilité.
+- création sûre du squelette de workflow utilisé par la console TUI.
 
 ## Tests fonctionnels
 
@@ -77,6 +78,7 @@ scripts avec un interpréteur Python séparé et vérifient les résultats visib
 - navigation du site ;
 - filtrage de données HTML dangereuses ;
 - validation de la matrice.
+- accès non interactif au catalogue par la commande TUI.
 
 Ils fixent l'encodage des sous-processus à UTF-8 pour produire les mêmes
 résultats sous Windows et Linux.

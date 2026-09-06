@@ -13,7 +13,7 @@ from workflow_data import WorkflowDataError, load_data_source
 
 
 MERMAID_ID = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
-SUPPORTED_ORIENTATIONS = {"TD", "LR", "BT", "RL"}
+SUPPORTED_ORIENTATIONS = {"TB", "TD", "LR", "BT", "RL"}
 
 
 class MermaidGenerationError(ValueError):
@@ -130,6 +130,84 @@ def select_workflow(
     return workflow, selected_states, selected_transitions
 
 
+def select_waterlines(
+    document: Mapping[str, Any],
+    workflow_id: str,
+    states: Sequence[Mapping[str, Any]],
+    participants: Sequence[Mapping[str, Any]] = (),
+) -> list[Mapping[str, Any]]:
+    waterlines = (
+        as_record_list(document, "Ligne_eau") if "Ligne_eau" in document else []
+    )
+    selected = [
+        waterline
+        for waterline in waterlines
+        if waterline.get("workflow_id") == workflow_id
+    ]
+    participant_ids = {
+        str(participant["participant_id"]) for participant in participants
+    }
+    waterline_ids: set[str] = set()
+    for waterline in selected:
+        waterline_id = require_mermaid_id(
+            waterline.get("ligne_eau_id"), "Ligne_eau.ligne_eau_id"
+        )
+        if waterline_id in waterline_ids:
+            raise MermaidGenerationError(
+                f"Ligne_eau.ligne_eau_id est dupliqué dans le workflow "
+                f"{workflow_id}: {waterline_id}"
+            )
+        waterline_ids.add(waterline_id)
+        if not isinstance(waterline.get("nom"), str) or not waterline["nom"].strip():
+            raise MermaidGenerationError(
+                f"Ligne_eau.nom est requis pour {waterline_id}."
+            )
+        participant_id = waterline.get("participant_id")
+        if participants and participant_id not in participant_ids:
+            raise MermaidGenerationError(
+                f"La ligne d'eau {waterline_id} référence un participant absent "
+                f"du workflow {workflow_id}: {participant_id!r}"
+            )
+
+    for state in states:
+        waterline_id = state.get("ligne_eau_id")
+        if waterline_id is not None and waterline_id not in waterline_ids:
+            raise MermaidGenerationError(
+                f"L'état {state.get('etat_id')} référence une ligne d'eau absente "
+                f"du workflow {workflow_id}: {waterline_id!r}"
+            )
+    return selected
+
+
+def select_participants(
+    document: Mapping[str, Any], workflow_id: str
+) -> list[Mapping[str, Any]]:
+    participants = (
+        as_record_list(document, "Participant") if "Participant" in document else []
+    )
+    selected = [
+        participant
+        for participant in participants
+        if participant.get("workflow_id") == workflow_id
+    ]
+    participant_ids: set[str] = set()
+    for participant in selected:
+        participant_id = require_mermaid_id(
+            participant.get("participant_id"), "Participant.participant_id"
+        )
+        if participant_id in participant_ids:
+            raise MermaidGenerationError(
+                f"Participant.participant_id est dupliqué dans le workflow "
+                f"{workflow_id}: {participant_id}"
+            )
+        participant_ids.add(participant_id)
+        if not isinstance(participant.get("nom"), str) or not participant["nom"].strip():
+            raise MermaidGenerationError(
+                f"Participant.nom est requis pour {participant_id}."
+            )
+    return selected
+
+
 def validate_workflow_records(
     workflow_id: str,
     states: Sequence[Mapping[str, Any]],
@@ -189,6 +267,18 @@ def state_sort_key(state: Mapping[str, Any]) -> tuple[float, str]:
     return numeric_order, str(state.get("etat_id", ""))
 
 
+def waterline_sort_key(waterline: Mapping[str, Any]) -> tuple[float, str]:
+    order = waterline.get("ordre")
+    numeric_order = float(order) if isinstance(order, (int, float)) else float("inf")
+    return numeric_order, str(waterline.get("ligne_eau_id", ""))
+
+
+def participant_sort_key(participant: Mapping[str, Any]) -> tuple[float, str]:
+    order = participant.get("ordre")
+    numeric_order = float(order) if isinstance(order, (int, float)) else float("inf")
+    return numeric_order, str(participant.get("participant_id", ""))
+
+
 def transition_sort_key(transition: Mapping[str, Any]) -> tuple[str, str, str]:
     return (
         str(transition.get("etat_source_id", "")),
@@ -201,11 +291,31 @@ def escape_mermaid_link(value: Any) -> str:
     return str(value).replace("\\", "/").replace('"', "%22")
 
 
+def wrap_label_on_two_lines(value: Any, max_characters: int | None) -> str:
+    """Wrap a label once, near its centre, when it exceeds the configured width."""
+    label = " ".join(str(value).split())
+    if not max_characters or len(label) <= max_characters or " " not in label:
+        return label
+    words = label.split(" ")
+    candidates = [
+        (" ".join(words[:index]), " ".join(words[index:]))
+        for index in range(1, len(words))
+    ]
+    first, second = min(
+        candidates,
+        key=lambda parts: (max(len(parts[0]), len(parts[1])), abs(len(parts[0]) - len(parts[1]))),
+    )
+    return f"{first}\n{second}"
+
+
 def generate_dataset_flowchart(
     workflow: Mapping[str, Any],
     states: Sequence[Mapping[str, Any]],
     transitions: Sequence[Mapping[str, Any]],
     link_resolver: Callable[[Mapping[str, Any]], str | None] | None = None,
+    waterlines: Sequence[Mapping[str, Any]] = (),
+    participants: Sequence[Mapping[str, Any]] = (),
+    lane_title_wrap: int | None = None,
 ) -> str:
     orientation = workflow.get("orientation") or "TD"
     if orientation not in SUPPORTED_ORIENTATIONS:
@@ -214,8 +324,91 @@ def generate_dataset_flowchart(
             f"Valeurs permises: {', '.join(sorted(SUPPORTED_ORIENTATIONS))}."
         )
 
+    if not waterlines:
+        return generate_dataset_basic_flowchart(
+            workflow,
+            states,
+            transitions,
+            link_resolver=link_resolver,
+        )
+
+    lines = [f"swimlane-beta {orientation}"]
+    ordered_states = sorted(states, key=state_sort_key)
+    grouped_state_ids: set[str] = set()
+    ordered_waterlines = sorted(waterlines, key=waterline_sort_key)
+
+    for waterline in ordered_waterlines:
+        waterline_id = str(waterline["ligne_eau_id"])
+        grouped_states = [
+            state for state in ordered_states if state.get("ligne_eau_id") == waterline_id
+        ]
+        if not grouped_states:
+            continue
+        grouped_state_ids.update(str(state["etat_id"]) for state in grouped_states)
+        label = escape_flowchart_label(
+            wrap_label_on_two_lines(waterline["nom"], lane_title_wrap)
+        )
+        lines.append(f'    subgraph Ligne_eau_{waterline_id} ["{label}"]')
+        for state in grouped_states:
+            state_id = str(state["etat_id"])
+            state_label = escape_flowchart_label(state["nom"])
+            lines.append(f'        {state_id}["{state_label}"]')
+        lines.append("    end")
+
+    ungrouped_states = [
+        state for state in ordered_states if str(state["etat_id"]) not in grouped_state_ids
+    ]
+    if ungrouped_states:
+        lines.append('    subgraph Sans_ligne_eau ["Sans ligne d’eau"]')
+        for state in ungrouped_states:
+            state_id = str(state["etat_id"])
+            label = escape_flowchart_label(state["nom"])
+            lines.append(f'        {state_id}["{label}"]')
+        lines.append("    end")
+
+    if transitions:
+        lines.append("")
+    for transition in sorted(transitions, key=transition_sort_key):
+        source = transition["etat_source_id"]
+        target = transition["etat_cible_id"]
+        label = escape_flowchart_label(transition["libelle"])
+        lines.append(f"    {source} -->|{label}| {target}")
+
+    linked_states = [
+        state
+        for state in sorted(states, key=state_sort_key)
+        if state.get("cible_lien")
+    ]
+    if linked_states:
+        lines.append("")
+    for state in linked_states:
+        target = (
+            link_resolver(state)
+            if link_resolver is not None
+            else str(state["cible_lien"])
+        )
+        if not target:
+            continue
+        tooltip = state.get("libelle_lien") or state["nom"]
+        lines.append(
+            f'    click {state["etat_id"]} "{escape_mermaid_link(target)}" '
+            f'"{escape_flowchart_label(tooltip)}"'
+        )
+
+    return "\n".join(lines)
+
+
+def generate_dataset_basic_flowchart(
+    workflow: Mapping[str, Any],
+    states: Sequence[Mapping[str, Any]],
+    transitions: Sequence[Mapping[str, Any]],
+    link_resolver: Callable[[Mapping[str, Any]], str | None] | None = None,
+) -> str:
+    orientation = workflow.get("orientation") or "TD"
     lines = [f"flowchart {orientation}"]
-    for state in sorted(states, key=state_sort_key):
+    ordered_states = sorted(states, key=state_sort_key)
+
+    for state in ordered_states:
         state_id = str(state["etat_id"])
         label = escape_flowchart_label(state["nom"])
         lines.append(f'    {state_id}["{label}"]')
@@ -387,8 +580,18 @@ def generate_diagrams(
         }
 
     workflow, states, transitions = select_workflow(document, workflow_id)
+    participants = select_participants(document, str(workflow["workflow_id"]))
+    waterlines = select_waterlines(
+        document, str(workflow["workflow_id"]), states, participants
+    )
     return {
-        "flowchart": generate_dataset_flowchart(workflow, states, transitions),
+        "flowchart": generate_dataset_flowchart(
+            workflow,
+            states,
+            transitions,
+            waterlines=waterlines,
+            participants=participants,
+        ),
         "state": generate_dataset_state_diagram(states, transitions),
     }
 

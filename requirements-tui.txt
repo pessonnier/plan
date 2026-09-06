@@ -1,0 +1,2 @@
+# Interface d'administration optionnelle. La génération du site reste sans dépendance.
+textual>=0.80,<2

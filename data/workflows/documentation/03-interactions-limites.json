@@ -1,0 +1,96 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Liens_cibles",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Presentation",
+      "nom": "Liens et cibles",
+      "description": "<p>Un état ou une transition peut pointer vers une phase, une fiche ou une URL HTTP(S). En Mermaid brut, <code>click</code> ajoute une destination et permet les cibles _self, _blank, _parent ou _top.</p>",
+      "type_etat": "normal",
+      "ordre": 100,
+      "couleur": "#fbcfe8"
+    },
+    {
+      "etat_id": "Infobulles",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Presentation",
+      "nom": "Infobulles",
+      "description": "<p>Une infobulle explique une source ou une action au survol et au clavier. Mermaid accepte une chaîne d'infobulle dans l'instruction <code>click</code> lorsque le niveau de sécurité autorise l'interaction.</p>",
+      "type_etat": "normal",
+      "ordre": 110,
+      "couleur": "#f9a8d4"
+    },
+    {
+      "etat_id": "Dimensions",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Technique",
+      "nom": "Dimensions et espacement",
+      "description": "<p><code>node_spacing</code> agit sur l'écart vertical. <code>wrapping_width</code> et <code>lane_title_wrap</code> agissent sur le texte. Avec Mermaid 11.17.2, <code>rank_spacing</code> agit sur les flowcharts mais pas sur la largeur de <code>swimlane-beta</code>. La largeur des couloirs reste calculée d'après leur contenu.</p>",
+      "type_etat": "blocage",
+      "ordre": 120,
+      "couleur": "#ffedd5"
+    },
+    {
+      "etat_id": "Accessibilite",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Technique",
+      "nom": "Accessibilité",
+      "description": "<p>Les directives <code>accTitle</code> et <code>accDescr</code> donnent un nom et une description accessibles au SVG. Les informations ne doivent jamais dépendre uniquement de la couleur.</p>",
+      "type_etat": "validation",
+      "ordre": 130,
+      "couleur": "#ddd6fe"
+    },
+    {
+      "etat_id": "Hors_ligne",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Technique",
+      "nom": "Fonctionnement hors ligne",
+      "description": "<p>Le moteur Mermaid, sa licence et les ressources nécessaires sont copiés dans le site généré. Les images et packs d'icônes doivent eux aussi être distribués localement pour rester disponibles sans Internet.</p>",
+      "type_etat": "normal",
+      "ordre": 140,
+      "couleur": "#c4b5fd"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Ajouter_liens",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Orientation_groupes",
+      "etat_cible_id": "Liens_cibles",
+      "libelle": "rendre navigable",
+      "actif": true
+    },
+    {
+      "transition_id": "Expliquer_actions",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Liens_cibles",
+      "etat_cible_id": "Infobulles",
+      "libelle": "aider au survol",
+      "actif": true
+    },
+    {
+      "transition_id": "Ajuster_dimensions",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Infobulles",
+      "etat_cible_id": "Dimensions",
+      "libelle": "ajuster le rendu",
+      "actif": true
+    },
+    {
+      "transition_id": "Verifier_accessibilite",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Dimensions",
+      "etat_cible_id": "Accessibilite",
+      "libelle": "vérifier",
+      "actif": true
+    },
+    {
+      "transition_id": "Distribuer_localement",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Accessibilite",
+      "etat_cible_id": "Hors_ligne",
+      "libelle": "publier sans dépendance réseau",
+      "actif": true
+    }
+  ]
+}

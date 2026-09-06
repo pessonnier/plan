@@ -1,0 +1,185 @@
+{
+  "title": "Guide visuel des éléments de workflow",
+  "introduction_html": "<p>Cette page nomme les éléments utilisables dans les workflows et montre leur notation. Les pastilles indiquent le niveau de prise en charge :</p><ul><li><strong>Éditeur JSON</strong> : configurable dans les données du projet ;</li><li><strong>Mermaid</strong> : disponible dans le moteur local, mais pas nécessairement dans l'éditeur ;</li><li><strong>Limite connue</strong> : syntaxe possible ou paramètre présent, avec une restriction dans Mermaid 11.17.2.</li></ul><p>Tous les exemples sont rendus par la copie locale de Mermaid. Le code de chaque exemple peut être déplié.</p>",
+  "sections": [
+    {
+      "id": "anatomie",
+      "title": "Anatomie et vocabulaire",
+      "description_html": "<p>Le <strong>workflow</strong> est le processus complet. Un <strong>participant</strong> ou pool représente une organisation ou un système. Une <strong>ligne d'eau</strong> répartit les activités par acteur. Un <strong>état</strong> ou nœud décrit une situation ou une activité. Une <strong>transition</strong> ou arête relie une source à une cible et peut porter un libellé.</p>",
+      "diagrams": [
+        {
+          "title": "Workflow à lignes d'eau",
+          "support": "json",
+          "support_label": "Éditeur JSON",
+          "description_html": "<p>Les sous-graphes de premier niveau deviennent les lignes d'eau. Les flèches peuvent traverser les couloirs.</p>",
+          "source": "swimlane-beta LR\n  accTitle: Anatomie d'un workflow à lignes d'eau\n  accDescr: Trois acteurs se transmettent une demande, une décision puis une réalisation.\n  subgraph Demandeur[Demandeur]\n    direction LR\n    Besoin([Besoin])\n  end\n  subgraph Decisionnaire[Décisionnaire]\n    direction LR\n    Arbitrage{Arbitrage}\n  end\n  subgraph Realisateur[Réalisateur]\n    direction LR\n    Action[Activité]\n    Fin((Fin))\n  end\n  Besoin -->|demande transmise| Arbitrage\n  Arbitrage -->|accord| Action\n  Action --> Fin\n  classDef initial fill:#dbeafe,stroke:#1d4ed8,color:#17212b\n  classDef decision fill:#fef3c7,stroke:#b45309,color:#17212b\n  classDef final fill:#dcfce7,stroke:#15803d,color:#17212b\n  class Besoin initial\n  class Arbitrage decision\n  class Fin final"
+        }
+      ]
+    },
+    {
+      "id": "formes",
+      "title": "Formes de nœuds",
+      "description_html": "<p>Mermaid accepte les formes historiques et la syntaxe générale <code>A@{ shape: rect, label: \"Texte\" }</code>. L'éditeur actuel expose surtout les cinq types d'état ; le catalogue suivant couvre les formes Mermaid 11.17.2.</p>",
+      "diagrams": [
+        {
+          "title": "Formes usuelles d'un processus",
+          "support": "mermaid",
+          "support_label": "Mermaid",
+          "description_html": "<p>Début/fin, activité, événement, décision, sous-processus, base de données, document, entrée/sortie et personne.</p>",
+          "source": "flowchart LR\n  A@{shape: sm-circ, label: \"Début\"} --> B@{shape: rect, label: \"Processus\"}\n  B --> C@{shape: rounded, label: \"Événement\"}\n  C --> D@{shape: diam, label: \"Décision\"}\n  D --> E@{shape: fr-rect, label: \"Sous-processus\"}\n  E --> F@{shape: cyl, label: \"Base de données\"}\n  F --> G@{shape: doc, label: \"Document\"}\n  G --> H@{shape: lean-r, label: \"Entrée / sortie\"}\n  H --> I@{shape: person, label: \"Personne\"}\n  I --> J@{shape: dbl-circ, label: \"Fin\"}"
+        },
+        {
+          "title": "Catalogue étendu — événements, traitements et contrôles",
+          "support": "mermaid",
+          "support_label": "Mermaid",
+          "source": "flowchart TB\n  subgraph R1[Événements et processus]\n    direction LR\n    n1@{shape: bang, label: \"bang\"} ~~~ n2@{shape: bolt, label: \"bolt\"} ~~~ n3@{shape: delay, label: \"delay\"} ~~~ n4@{shape: rounded, label: \"rounded\"} ~~~ n5@{shape: fork, label: \"fork\"} ~~~ n6@{shape: rect, label: \"rect\"} ~~~ n7@{shape: fr-rect, label: \"fr-rect\"} ~~~ n8@{shape: st-rect, label: \"st-rect\"}\n  end\n  subgraph R2[Décisions et limites]\n    direction LR\n    n9@{shape: diam, label: \"diam\"} ~~~ n10@{shape: hex, label: \"hex\"} ~~~ n11@{shape: hourglass, label: \"hourglass\"} ~~~ n12@{shape: notch-pent, label: \"notch-pent\"} ~~~ n13@{shape: trap-b, label: \"trap-b\"} ~~~ n14@{shape: trap-t, label: \"trap-t\"}\n  end\n  subgraph R3[Points de départ et de fin]\n    direction LR\n    n15@{shape: circle, label: \"circle\"} ~~~ n16@{shape: sm-circ, label: \"sm-circ\"} ~~~ n17@{shape: f-circ, label: \"f-circ\"} ~~~ n18@{shape: dbl-circ, label: \"dbl-circ\"} ~~~ n19@{shape: fr-circ, label: \"fr-circ\"} ~~~ n20@{shape: cross-circ, label: \"cross-circ\"} ~~~ n21@{shape: stadium, label: \"stadium\"}\n  end"
+        },
+        {
+          "title": "Catalogue étendu — données, documents et interfaces",
+          "support": "mermaid",
+          "support_label": "Mermaid",
+          "source": "flowchart TB\n  subgraph R1[Données et stockage]\n    direction LR\n    d1@{shape: bucket, label: \"bucket\"} ~~~ d2@{shape: datastore, label: \"datastore\"} ~~~ d3@{shape: cyl, label: \"cyl\"} ~~~ d4@{shape: h-cyl, label: \"h-cyl\"} ~~~ d5@{shape: lin-cyl, label: \"lin-cyl\"} ~~~ d6@{shape: bow-rect, label: \"bow-rect\"} ~~~ d7@{shape: win-pane, label: \"win-pane\"}\n  end\n  subgraph R2[Documents]\n    direction LR\n    d8@{shape: doc, label: \"doc\"} ~~~ d9@{shape: lin-doc, label: \"lin-doc\"} ~~~ d10@{shape: docs, label: \"docs\"} ~~~ d11@{shape: tag-doc, label: \"tag-doc\"} ~~~ d12@{shape: flag, label: \"flag\"} ~~~ d13@{shape: folder, label: \"folder\"}\n  end\n  subgraph R3[Interfaces et saisies]\n    direction LR\n    d14@{shape: browser, label: \"browser\"} ~~~ d15@{shape: console, label: \"console\"} ~~~ d16@{shape: curv-trap, label: \"curv-trap\"} ~~~ d17@{shape: lean-r, label: \"lean-r\"} ~~~ d18@{shape: lean-l, label: \"lean-l\"} ~~~ d19@{shape: sl-rect, label: \"sl-rect\"}\n  end"
+        },
+        {
+          "title": "Catalogue étendu — annotations et autres formes",
+          "support": "mermaid",
+          "support_label": "Mermaid",
+          "source": "flowchart TB\n  subgraph R1[Annotations]\n    direction LR\n    a1@{shape: brace, label: \"brace\"} ~~~ a2@{shape: brace-r, label: \"brace-r\"} ~~~ a3@{shape: braces, label: \"braces\"} ~~~ a4@{shape: text, label: \"text\"}\n  end\n  subgraph R2[Opérations particulières]\n    direction LR\n    a5@{shape: div-rect, label: \"div-rect\"} ~~~ a6@{shape: lin-rect, label: \"lin-rect\"} ~~~ a7@{shape: notch-rect, label: \"notch-rect\"} ~~~ a8@{shape: tag-rect, label: \"tag-rect\"} ~~~ a9@{shape: tri, label: \"tri\"} ~~~ a10@{shape: flip-tri, label: \"flip-tri\"}\n  end\n  subgraph R3[Formes diverses]\n    direction LR\n    a11@{shape: odd, label: \"odd\"} ~~~ a12@{shape: cloud, label: \"cloud\"} ~~~ a13@{shape: person, label: \"person\"}\n  end"
+        }
+      ]
+    },
+    {
+      "id": "couleurs",
+      "title": "Couleurs, classes et styles",
+      "description_html": "<p>Le modèle JSON possède un champ <code>couleur</code> pour les états et les lignes d'eau. Mermaid brut ajoute <code>style</code> pour un nœud, <code>classDef</code>/<code>class</code> pour les styles réutilisables et <code>linkStyle</code> pour les arêtes.</p>",
+      "diagrams": [
+        {
+          "title": "Styles sémantiques",
+          "support": "mermaid",
+          "support_label": "Mermaid",
+          "source": "flowchart LR\n  A([Initial]) --> B[Normal] --> C{Validation}\n  C -->|non| D[Blocage]\n  C -->|oui| E((Final))\n  classDef initial fill:#dbeafe,stroke:#1d4ed8,color:#17212b,stroke-width:2px\n  classDef normal fill:#f3f4f6,stroke:#4b5563,color:#17212b\n  classDef validation fill:#fef3c7,stroke:#b45309,color:#17212b\n  classDef blocage fill:#fee2e2,stroke:#b91c1c,color:#17212b,stroke-width:3px\n  classDef final fill:#dcfce7,stroke:#15803d,color:#17212b,stroke-width:2px\n  class A initial\n  class B normal\n  class C validation\n  class D blocage\n  class E final\n  linkStyle 2 stroke:#b91c1c,stroke-width:3px\n  linkStyle 3 stroke:#15803d,stroke-width:3px"
+        }
+      ]
+    },
+    {
+      "id": "transitions",
+      "title": "Transitions, traits et flèches",
+      "description_html": "<p>Une transition peut être simple, ouverte, pointillée, épaisse, bidirectionnelle, terminée par un cercle ou une croix, étiquetée ou allongée. Les identifiants d'arêtes autorisent les classes et animations.</p>",
+      "diagrams": [
+        {
+          "title": "Principaux types de liens",
+          "support": "mermaid",
+          "support_label": "Mermaid",
+          "source": "flowchart LR\n  A[Source] -->|flèche et libellé| B[Cible]\n  C[Source] --- D[Lien ouvert]\n  E[Source] -.-> F[Pointillé]\n  G[Source] ==> H[Épais]\n  I[Source] o--o J[Cercles]\n  K[Source] x--x L[Croix]\n  M[Source] <--> N[Bidirectionnel]\n  O[Source] ---->|longueur minimale| P[Cible éloignée]\n  Q[Source] ~~~ R[Lien invisible de placement]"
+        }
+      ]
+    },
+    {
+      "id": "textes",
+      "title": "Textes, retours à la ligne, puces et contenu",
+      "description_html": "<p>Les fiches d'état affichées sous les diagrammes acceptent des paragraphes, des listes à puces <code>ul/li</code>, des listes numérotées <code>ol/li</code>, du gras, de l'italique, du code, des retours et des liens HTTP(S). Dans les nœuds Mermaid, les chaînes Markdown gèrent le gras, l'italique et le retour automatique ; les libellés HTML peuvent utiliser <code>&lt;br/&gt;</code>.</p><ul><li>Utiliser les puces pour des critères ou livrables.</li><li>Garder les nœuds courts et placer les détails dans les fiches.</li><li>Ne pas coder une information uniquement par la couleur.</li></ul>",
+      "diagrams": [
+        {
+          "title": "Mise en forme du libellé",
+          "support": "mermaid",
+          "support_label": "Mermaid",
+          "source": "flowchart LR\n  A[\"Première ligne<br/>Seconde ligne\"] --> B[\"• premier point<br/>• second point\"]\n  B --> C[\"Texte court dans le nœud<br/>Détails dans la fiche\"]"
+        }
+      ]
+    },
+    {
+      "id": "liens-infobulles",
+      "title": "Liens, cibles et infobulles",
+      "description_html": "<p>L'éditeur gère les liens vers une phase, une fiche d'état et une URL HTTP(S), avec libellé et validation. Mermaid brut accepte <code>click</code>, une URL, une infobulle et une cible <code>_self</code>, <code>_blank</code>, <code>_parent</code> ou <code>_top</code>. Le site initialise Mermaid avec <code>securityLevel: loose</code> pour permettre ces interactions.</p>",
+      "diagrams": [
+        {
+          "title": "Nœuds cliquables et aide au survol",
+          "support": "mermaid",
+          "support_label": "Mermaid",
+          "description_html": "<p>Survolez les nœuds pour voir les infobulles. Le premier lien reste dans le guide ; le second illustre une documentation externe facultative.</p>",
+          "source": "flowchart LR\n  A[Dimensions] --> B[Documentation Mermaid]\n  click A href \"#dimensions\" \"Aller à la section Dimensions\" _self\n  click B href \"https://mermaid.js.org/\" \"Ouvrir le site officiel — accès Internet requis\" _blank\n  classDef clickable fill:#e0f2fe,stroke:#075985,color:#17212b\n  class A,B clickable"
+        }
+      ]
+    },
+    {
+      "id": "groupes-orientations",
+      "title": "Groupes, lignes d'eau et orientations",
+      "description_html": "<p>Les orientations sont <strong>TB/TD</strong> (haut vers bas), <strong>BT</strong>, <strong>LR</strong> et <strong>RL</strong>. Un <code>subgraph</code> forme un groupe ; un sous-graphe de premier niveau forme un couloir dans <code>swimlane-beta</code>. Mermaid 11.17 ajoute aussi les sous-graphes repliés via <code>view: collapsed</code>.</p>",
+      "diagrams": [
+        {
+          "title": "Sous-graphes et direction locale",
+          "support": "mermaid",
+          "support_label": "Mermaid",
+          "source": "flowchart LR\n  subgraph Preparation[Préparation]\n    direction TB\n    A[Collecter] --> B[Contrôler]\n  end\n  subgraph Execution[Exécution]\n    direction TB\n    C[Traiter] --> D[Publier]\n  end\n  B --> C"
+        }
+      ]
+    },
+    {
+      "id": "familles",
+      "title": "Familles de diagrammes Mermaid",
+      "description_html": "<p>Le moteur Mermaid fournit de nombreuses familles, même si le modèle et l'éditeur du projet n'en gèrent aujourd'hui que trois : <strong>flowchart</strong>, <strong>swimlane</strong> et <strong>stateDiagram</strong>.</p><ul><li>Processus : flowchart, swimlane, state, sequence, user journey, timeline, event modeling, BPMN via conventions.</li><li>Architecture et logiciel : class, C4, architecture, block, packet, requirement, git graph.</li><li>Données : entity relationship, Sankey.</li><li>Planification et organisation : Gantt, Kanban, mindmap.</li><li>Analyse et graphiques : pie, quadrant, XY, radar, treemap, Venn, Ishikawa, Wardley, Cynefin, TreeView.</li><li>Autres syntaxes : ZenUML.</li></ul>",
+      "diagrams": [
+        {
+          "title": "Cycle de vie — stateDiagram-v2",
+          "support": "json",
+          "support_label": "Éditeur JSON",
+          "source": "stateDiagram-v2\n  accTitle: Cycle de vie d'un document\n  [*] --> Brouillon\n  Brouillon --> Validation\n  state choix <<choice>>\n  Validation --> choix\n  choix --> Publie: accepté\n  choix --> Brouillon: corrections\n  Publie --> [*]"
+        },
+        {
+          "title": "Échanges entre acteurs — sequenceDiagram",
+          "support": "mermaid",
+          "support_label": "Mermaid",
+          "source": "sequenceDiagram\n  actor Demandeur\n  participant Service\n  participant Systeme\n  Demandeur->>Service: Déposer une demande\n  activate Service\n  Service->>Systeme: Contrôler\n  Systeme-->>Service: Résultat\n  Service-->>Demandeur: Décision\n  deactivate Service"
+        }
+      ]
+    },
+    {
+      "id": "icones-images",
+      "title": "Icônes et images",
+      "description_html": "<p>Mermaid 11 propose des nœuds icône et image. Les icônes exigent l'enregistrement préalable d'un pack ; les images acceptent une URL, un libellé, une position et des dimensions. Ces fonctions ne sont pas gérées par l'éditeur actuel. Pour respecter le fonctionnement hors ligne, le pack d'icônes et les images doivent être ajoutés aux ressources locales du site.</p>",
+      "diagrams": [
+        {
+          "title": "Syntaxe d'une icône — exemple non rendu",
+          "support": "limite",
+          "support_label": "Pack local requis",
+          "render": false,
+          "source": "flowchart LR\n  A@{ icon: \"fa:user\", form: \"circle\", label: \"Utilisateur\", pos: \"b\", h: 48 }"
+        },
+        {
+          "title": "Syntaxe d'une image — exemple non rendu",
+          "support": "limite",
+          "support_label": "Image locale requise",
+          "render": false,
+          "source": "flowchart LR\n  A@{ img: \"assets/exemple.png\", label: \"Illustration locale\", pos: \"t\", w: 80, h: 60, constraint: \"on\" }"
+        }
+      ]
+    },
+    {
+      "id": "dimensions",
+      "title": "Dimensions et espacement",
+      "description_html": "<p>Le manifeste expose <code>node_spacing</code>, <code>rank_spacing</code>, <code>diagram_padding</code>, <code>wrapping_width</code>, <code>lane_title_wrap</code> et <code>use_max_width</code>.</p><ul><li><code>node_spacing</code> modifie l'écart transversal et change bien la hauteur des lignes d'eau.</li><li><code>rank_spacing</code> modifie l'écart horizontal des flowcharts LR, mais nos essais montrent qu'il ne change pas la largeur de <code>swimlane-beta</code> avec Mermaid 11.17.2.</li><li><code>wrapping_width</code> et <code>lane_title_wrap</code> réduisent la place prise par les textes longs.</li><li><code>use_max_width: false</code> conserve la taille naturelle et active le défilement horizontal ; <code>true</code> comprime le SVG à la largeur du panneau.</li><li>La largeur individuelle des couloirs est actuellement calculée par Mermaid à partir du contenu ; aucun paramètre distinct du manifeste ne la force.</li></ul>",
+      "diagrams": [
+        {
+          "title": "Paramètres du manifeste",
+          "support": "limite",
+          "support_label": "Limite connue",
+          "render": false,
+          "source": "{\n  \"site\": {\n    \"diagram\": {\n      \"node_spacing\": 42,\n      \"rank_spacing\": 55,\n      \"diagram_padding\": 20,\n      \"wrapping_width\": 190,\n      \"lane_title_wrap\": 18,\n      \"use_max_width\": false\n    }\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": "accessibilite",
+      "title": "Accessibilité, sécurité et hors ligne",
+      "description_html": "<p>Un diagramme doit fournir un titre et une description accessibles avec <code>accTitle</code> et <code>accDescr</code>, des libellés explicites et un contraste suffisant. Les informations critiques doivent être répétées dans le texte des fiches. Les liens et infobulles doivent rester utilisables au clavier.</p><p>Le rendu interactif utilise un niveau de sécurité Mermaid permissif : les sources de diagrammes doivent donc rester maîtrisées. Le site n'a besoin d'aucun accès Internet pour afficher les workflows : Mermaid est versionné localement. Les URL externes présentes dans les exemples restent facultatives.</p>",
+      "diagrams": [
+        {
+          "title": "Titre et description accessibles",
+          "support": "mermaid",
+          "support_label": "Mermaid",
+          "source": "flowchart LR\n  accTitle: Exemple de processus accessible\n  accDescr: Une demande passe de la saisie au contrôle puis à la publication.\n  A[Saisir la demande] --> B{Dossier complet ?}\n  B -->|oui| C[Publier]\n  B -->|non| A"
+        }
+      ]
+    }
+  ]
+}

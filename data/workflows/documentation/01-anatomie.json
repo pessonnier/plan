@@ -1,0 +1,89 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Workflow",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Structure",
+      "nom": "Workflow",
+      "description": "<p>Le workflow est le processus complet. Il possède un identifiant, un nom, une description, un type de diagramme et une orientation.</p><ul><li><strong>flowchart</strong> : graphe général ;</li><li><strong>swimlane</strong> : activités réparties par lignes d'eau ;</li><li><strong>stateDiagram</strong> : cycle de vie d'un objet.</li></ul>",
+      "type_etat": "initial",
+      "ordre": 10,
+      "couleur": "#dbeafe"
+    },
+    {
+      "etat_id": "Participant",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Acteurs",
+      "nom": "Participant ou pool",
+      "description": "<p>Un participant représente une organisation, un système ou un tiers. En BPMN, son enveloppe est souvent appelée <em>pool</em>.</p>",
+      "type_etat": "normal",
+      "ordre": 20,
+      "couleur": "#dcfce7"
+    },
+    {
+      "etat_id": "Ligne_eau",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Acteurs",
+      "nom": "Ligne d'eau ou couloir",
+      "description": "<p>Une ligne d'eau, ou <em>swimlane</em>, regroupe les activités d'un acteur, d'une entité ou d'un système. Sa largeur dépend actuellement du contenu calculé par Mermaid.</p>",
+      "type_etat": "normal",
+      "ordre": 30,
+      "couleur": "#bbf7d0"
+    },
+    {
+      "etat_id": "Etat",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Elements",
+      "nom": "État ou activité",
+      "description": "<p>Un état est un nœud du diagramme. Le modèle distingue cinq usages : initial, normal, validation, blocage et final.</p>",
+      "type_etat": "validation",
+      "ordre": 40,
+      "couleur": "#fef3c7"
+    },
+    {
+      "etat_id": "Transition",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Elements",
+      "nom": "Transition ou flux",
+      "description": "<p>Une transition relie une source à une cible. Son libellé nomme l'événement, sa condition décrit le garde-fou et son action précise le travail associé.</p>",
+      "type_etat": "normal",
+      "ordre": 50,
+      "couleur": "#fde68a"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Contenir_participant",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Workflow",
+      "etat_cible_id": "Participant",
+      "libelle": "contient",
+      "condition": "Le processus implique un ou plusieurs participants.",
+      "actif": true
+    },
+    {
+      "transition_id": "Decouper_lignes",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Participant",
+      "etat_cible_id": "Ligne_eau",
+      "libelle": "se découpe en",
+      "actif": true
+    },
+    {
+      "transition_id": "Placer_etat",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Ligne_eau",
+      "etat_cible_id": "Etat",
+      "libelle": "porte",
+      "actif": true
+    },
+    {
+      "transition_id": "Relier_etats",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Etat",
+      "etat_cible_id": "Transition",
+      "libelle": "est relié par",
+      "actif": true
+    }
+  ]
+}

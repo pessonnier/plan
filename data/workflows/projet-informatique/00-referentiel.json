@@ -12,9 +12,151 @@
       "workflow_id": "Projet_informatique",
       "nom": "Réalisation et cycle de vie d'un projet informatique",
       "description": "Workflow de gouvernance couvrant l'opportunité, le budget, les spécifications, le marché, la réalisation, la mise en production, la maintenance et le décommissionnement.",
-      "type_diagramme": "flowchart",
+      "type_diagramme": "swimlane",
       "orientation": "LR",
       "actif": false
+    }
+  ],
+  "Participant": [
+    {
+      "participant_id": "Organisation_porteuse",
+      "workflow_id": "Projet_informatique",
+      "nom": "Organisation porteuse du projet",
+      "description": "Pool interne contenant le processus de conduite et de réalisation du projet informatique.",
+      "processus_visible": true,
+      "ordre": 10
+    }
+  ],
+  "Ligne_eau": [
+    {
+      "ligne_eau_id": "Pilotage_gouvernance",
+      "workflow_id": "Projet_informatique",
+      "participant_id": "Organisation_porteuse",
+      "nom": "Direction financière",
+      "description": "Estimation, contrôle et autorisation des engagements financiers.",
+      "type_partition": "role",
+      "role_id": "Finance",
+      "ordre": 30
+    },
+    {
+      "ligne_eau_id": "Responsable_conduite_projet",
+      "workflow_id": "Projet_informatique",
+      "participant_id": "Organisation_porteuse",
+      "nom": "Responsable de conduite de projet",
+      "description": "Préparation, coordination et planification assurées par le responsable de conduite de projet.",
+      "type_partition": "role",
+      "role_id": "Chef_projet",
+      "ordre": 40
+    },
+    {
+      "ligne_eau_id": "Sponsor_metiers",
+      "workflow_id": "Projet_informatique",
+      "participant_id": "Organisation_porteuse",
+      "nom": "Sponsor métier",
+      "description": "Décisions de lancement, arbitrages majeurs et clôture du projet.",
+      "type_partition": "role",
+      "role_id": "Sponsor",
+      "ordre": 10
+    },
+    {
+      "ligne_eau_id": "Architecture_securite",
+      "workflow_id": "Projet_informatique",
+      "participant_id": "Organisation_porteuse",
+      "nom": "Architecture d'entreprise",
+      "description": "Conception et validation de l'architecture et de l'intégration au SI.",
+      "type_partition": "entite",
+      "role_id": "Architecture",
+      "ordre": 50
+    },
+    {
+      "ligne_eau_id": "Achats_contractualisation",
+      "workflow_id": "Projet_informatique",
+      "participant_id": "Organisation_porteuse",
+      "nom": "Direction des achats",
+      "description": "Entité interne chargée de la consultation, de l'attribution et de la contractualisation.",
+      "type_partition": "entite",
+      "role_id": "Achats",
+      "ordre": 80
+    },
+    {
+      "ligne_eau_id": "Realisation_qualite",
+      "workflow_id": "Projet_informatique",
+      "participant_id": "Organisation_porteuse",
+      "nom": "Équipe de réalisation",
+      "description": "Développement, documentation, évolutions et corrections de la solution.",
+      "type_partition": "role",
+      "role_id": "Equipe_dev",
+      "ordre": 90
+    },
+    {
+      "ligne_eau_id": "Exploitation_operations",
+      "workflow_id": "Projet_informatique",
+      "participant_id": "Organisation_porteuse",
+      "nom": "Exploitation et opérations",
+      "description": "Préparation technique, production, supervision et retrait des services.",
+      "type_partition": "entite",
+      "role_id": "Exploitation",
+      "ordre": 120
+    },
+    {
+      "ligne_eau_id": "Metiers_validation",
+      "workflow_id": "Projet_informatique",
+      "participant_id": "Organisation_porteuse",
+      "nom": "Représentants métier",
+      "description": "Expression détaillée du besoin et validation fonctionnelle de la solution.",
+      "type_partition": "role",
+      "role_id": "Metier",
+      "ordre": 20
+    },
+    {
+      "ligne_eau_id": "Securite_homologation",
+      "workflow_id": "Projet_informatique",
+      "participant_id": "Organisation_porteuse",
+      "nom": "Sécurité des systèmes d'information",
+      "description": "Analyse des risques, contrôles de sécurité et décision d'homologation.",
+      "type_partition": "role",
+      "role_id": "Securite",
+      "ordre": 60
+    },
+    {
+      "ligne_eau_id": "DPO_donnees",
+      "workflow_id": "Projet_informatique",
+      "participant_id": "Organisation_porteuse",
+      "nom": "Protection des données",
+      "description": "Contrôle du cycle de vie, de l'archivage et de la suppression des données.",
+      "type_partition": "role",
+      "role_id": "DPO",
+      "ordre": 70
+    },
+    {
+      "ligne_eau_id": "Qualite_tests",
+      "workflow_id": "Projet_informatique",
+      "participant_id": "Organisation_porteuse",
+      "nom": "Qualité et tests",
+      "description": "Revues, tests, preuves de conformité et validation des livraisons.",
+      "type_partition": "role",
+      "role_id": "Qualite",
+      "ordre": 100
+    },
+    {
+      "ligne_eau_id": "CAB_changements",
+      "workflow_id": "Projet_informatique",
+      "participant_id": "Organisation_porteuse",
+      "nom": "Comité des changements",
+      "description": "Évaluation du risque et autorisation des mises en production.",
+      "type_partition": "role",
+      "role_id": "CAB",
+      "ordre": 110
+    },
+    {
+      "ligne_eau_id": "Maintenance_service",
+      "workflow_id": "Projet_informatique",
+      "participant_id": "Organisation_porteuse",
+      "nom": "Responsable de maintenance",
+      "description": "Pilotage des incidents, évolutions, corrections et niveaux de service.",
+      "type_partition": "role",
+      "role_id": "Maintenance",
+      "ordre": 130
     }
   ],
   "Role": [

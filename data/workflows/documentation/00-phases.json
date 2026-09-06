@@ -1,0 +1,74 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Phase_Anatomie",
+      "workflow_id": "Phases_documentation",
+      "nom": "1. Anatomie d'un workflow",
+      "description": "Identifier le workflow, les acteurs, les lignes d'eau, les états et les transitions.",
+      "type_etat": "initial",
+      "ordre": 10,
+      "type_lien": "page_phase",
+      "cible_lien": "phases/01-anatomie.html",
+      "libelle_lien": "Ouvrir l'anatomie"
+    },
+    {
+      "etat_id": "Phase_Presentation",
+      "workflow_id": "Phases_documentation",
+      "nom": "2. Présentation graphique",
+      "description": "Découvrir les formes, couleurs, orientations, textes et regroupements.",
+      "type_etat": "normal",
+      "ordre": 20,
+      "type_lien": "page_phase",
+      "cible_lien": "phases/02-presentation.html",
+      "libelle_lien": "Ouvrir la présentation graphique"
+    },
+    {
+      "etat_id": "Phase_Interactions",
+      "workflow_id": "Phases_documentation",
+      "nom": "3. Interactions et limites",
+      "description": "Comprendre les liens, infobulles, dimensions, fonctions avancées et limites connues.",
+      "type_etat": "normal",
+      "ordre": 30,
+      "type_lien": "page_phase",
+      "cible_lien": "phases/03-interactions-limites.html",
+      "libelle_lien": "Ouvrir les interactions et limites"
+    },
+    {
+      "etat_id": "Phase_Generation_site",
+      "workflow_id": "Phases_documentation",
+      "nom": "4. Génération du site",
+      "description": "Suivre les sources modifiables, les outils, les déclencheurs et les fichiers produits, puis évaluer le processus.",
+      "type_etat": "final",
+      "ordre": 40,
+      "type_lien": "page_phase",
+      "cible_lien": "phases/04-generation-site.html",
+      "libelle_lien": "Ouvrir le processus de génération"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Documenter_presentation",
+      "workflow_id": "Phases_documentation",
+      "etat_source_id": "Phase_Anatomie",
+      "etat_cible_id": "Phase_Presentation",
+      "libelle": "vocabulaire identifié",
+      "actif": true
+    },
+    {
+      "transition_id": "Documenter_interactions",
+      "workflow_id": "Phases_documentation",
+      "etat_source_id": "Phase_Presentation",
+      "etat_cible_id": "Phase_Interactions",
+      "libelle": "notation comprise",
+      "actif": true
+    },
+    {
+      "transition_id": "Documenter_generation_site",
+      "workflow_id": "Phases_documentation",
+      "etat_source_id": "Phase_Interactions",
+      "etat_cible_id": "Phase_Generation_site",
+      "libelle": "chaîne de publication expliquée",
+      "actif": true
+    }
+  ]
+}

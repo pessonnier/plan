@@ -30,7 +30,17 @@ class GenerateMermaidTests(unittest.TestCase):
             document, generate_mermaid.detect_input_kind(document), None
         )
 
-        self.assertTrue(diagrams["flowchart"].startswith("flowchart TD\n"))
+        self.assertTrue(diagrams["flowchart"].startswith("swimlane-beta TD\n"))
+        self.assertIn(
+            'subgraph Ligne_eau_Agent_instructeur '
+            '["Agent instructeur"]',
+            diagrams["flowchart"],
+        )
+        self.assertIn(
+            'subgraph Ligne_eau_Autorite_validation '
+            '["Autorité de validation"]',
+            diagrams["flowchart"],
+        )
         self.assertIn('A_qualifier["À qualifier"]', diagrams["flowchart"])
         self.assertIn(
             "A_qualifier -->|dossier complet| En_instruction",
@@ -42,6 +52,28 @@ class GenerateMermaidTests(unittest.TestCase):
         self.assertIn("[*] --> A_qualifier", diagrams["state"])
         self.assertIn("Clos --> [*]", diagrams["state"])
         self.assertNotIn("ancienne transition", diagrams["state"])
+
+    def test_waterline_title_can_wrap_once_without_participant_prefix(self):
+        document = self.load_example()
+        workflow, states, transitions = generate_mermaid.select_workflow(document, None)
+        participants = generate_mermaid.select_participants(
+            document, str(workflow["workflow_id"])
+        )
+        waterlines = generate_mermaid.select_waterlines(
+            document, str(workflow["workflow_id"]), states, participants
+        )
+
+        diagram = generate_mermaid.generate_dataset_flowchart(
+            workflow,
+            states,
+            transitions,
+            waterlines=waterlines,
+            participants=participants,
+            lane_title_wrap=15,
+        )
+
+        self.assertIn('["Agent<br/>instructeur"]', diagram)
+        self.assertNotIn("Organisme gestionnaire —", diagram)
 
     def test_schema_generates_structural_diagrams(self):
         document = json.loads(
@@ -56,6 +88,13 @@ class GenerateMermaidTests(unittest.TestCase):
 
         self.assertTrue(diagrams["flowchart"].startswith("flowchart LR\n"))
         self.assertIn("Etat -->|workflow_id| Workflow", diagrams["flowchart"])
+        self.assertIn("Etat -->|ligne_eau_id| Ligne_eau", diagrams["flowchart"])
+        self.assertIn("Ligne_eau -->|workflow_id| Workflow", diagrams["flowchart"])
+        self.assertIn(
+            "Ligne_eau -->|participant_id| Participant",
+            diagrams["flowchart"],
+        )
+        self.assertIn("Participant -->|workflow_id| Workflow", diagrams["flowchart"])
         self.assertTrue(diagrams["state"].startswith("stateDiagram-v2\n"))
         self.assertIn("Etat --> Workflow : workflow_id", diagrams["state"])
 
@@ -102,6 +141,16 @@ class GenerateMermaidTests(unittest.TestCase):
             content = output.read_text(encoding="utf-8")
             self.assertTrue(content.startswith("```mermaid\nstateDiagram-v2\n"))
             self.assertTrue(content.endswith("\n```\n"))
+
+    def test_state_with_unknown_waterline_is_rejected(self):
+        document = self.load_example()
+        document["Etat"][0]["ligne_eau_id"] = "Ligne_absente"
+
+        with self.assertRaisesRegex(
+            generate_mermaid.MermaidGenerationError,
+            "ligne d'eau absente",
+        ):
+            generate_mermaid.generate_diagrams(document, "dataset", None)
 
 
 if __name__ == "__main__":

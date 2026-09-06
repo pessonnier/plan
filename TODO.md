@@ -2,16 +2,16 @@
 
 ## 1. Stabiliser l'existant
 
-- Valider les jeux de données des workflows disponibles.
-- Exécuter l'ensemble des tests unitaires et fonctionnels.
-- Vérifier la cohérence entre les spécifications, la matrice de traçabilité et l'implémentation.
+- [x] Valider les jeux de données des workflows disponibles.
+- [x] Exécuter l'ensemble des tests unitaires et fonctionnels.
+- [x] Vérifier la cohérence entre les spécifications, la matrice de traçabilité et l'implémentation.
 - Documenter les limites actuellement connues.
 
 ## 2. Clarifier l'architecture cible
 
 - Définir la séparation entre le modèle métier, le chargement des données et les générateurs de sortie.
-- Formaliser les responsabilités des scripts de validation, de génération Mermaid et de génération HTML.
-- Décider si le catalogue de workflows reste un fichier statique ou devient une abstraction extensible.
+- [x] Formaliser les responsabilités des scripts de validation, de génération Mermaid et de génération HTML.
+- [x] Décider si le catalogue de workflows reste un fichier statique ou devient une abstraction extensible.
 - Définir une stratégie de versionnement du schéma et des fichiers de données.
 
 ## 3. Faire évoluer le modèle de données
@@ -21,7 +21,7 @@
 - Ajouter un attribut `couleur` aux états et définir son format ainsi que sa valeur par défaut.
 - Ajouter un attribut `type` aux états.
 - Limiter les valeurs autorisées de `type` à `etape`, `exigence` et `service`.
-- Préciser les contraintes d'intégrité et les règles de compatibilité ascendante.
+- [x] Préciser les contraintes d'intégrité et les règles de compatibilité ascendante.
 - Ajouter chaque nouvelle exigence dans `docs/specifications.md` avant son implémentation.
 
 ## 4. Intégrer Grist
@@ -39,8 +39,8 @@
 
 - Définir les formats d'import et d'export prioritaires.
 - Étudier la génération de vues filtrées par rôle, phase ou état.
-- Prévoir une navigation croisée entre workflows, phases et états.
-- Évaluer le besoin d'une interface d'édition ou d'un outil de ligne de commande unifié.
+- [x] Prévoir une navigation croisée entre workflows, phases et états.
+- [x] Fournir une interface statique d'édition et d'export JSON des workflows.
 - Créer une zone d'administration.
 - Créer une zone de suivi de projet.
 - Le suivi de projet doit se dérouler à travers des écrans gérés par Grist.
@@ -65,8 +65,8 @@
 ## 6. Renforcer la qualité
 
 - [x] Ajouter des scénarios de test pour les données invalides et les références croisées.
-- Tester la génération complète du site avec plusieurs workflows.
-- Vérifier l'accessibilité et la sécurité des sorties HTML.
+- [x] Tester la génération complète du site avec plusieurs workflows.
+- [x] Vérifier l'accessibilité et la sécurité des sorties HTML.
 - Tester la conformité entre le modèle JSON, les tables Grist et les écrans de saisie.
 - Ajouter des contrôles automatiques de formatage et de validation dans l'intégration continue.
 
@@ -75,9 +75,33 @@
 - dockerisation
 - construction d'un pugin grist
 - sauvegarde dans les tables grist
-- ajout d'un editeur pour le texte
+- [x] éditeur du texte de l'état en Markdown, HTML ou texte brut
 - ajout d'un editeur mermaid
 - convertion mermaid <-> tableau grist
+
+## 7. Éditeur JSON et vocabulaire
+
+- [x] Unifier « description » et « texte associé » sous le terme « texte de l'état ».
+- [x] Conserver les formats de saisie Markdown, HTML et texte brut.
+- [x] Supprimer les pages individuelles `states/*.html`.
+- [x] Conserver un répertoire unique des états dans `etats.html`.
+- [x] Signaler les états contenant une destination de lien invalide.
+- [x] Autoriser la copie et le téléchargement du JSON malgré ces avertissements.
+- [x] Afficher le vocabulaire normatif dans l'éditeur.
+- [x] Documenter la compatibilité ascendante du champ historique `Etat.description`.
+- [x] Remplacer le tableau des transitions par une liste dans le champ identifiant.
+- [x] Charger et supprimer une transition depuis le formulaire.
+- [x] Remplacer le tableau des états par une liste dans le champ identifiant.
+- [x] Charger et supprimer un état depuis le formulaire.
+- [x] Relier l'éditeur au répertoire distinct `etats.html`.
+- [x] Permettre de placer l'édition des transitions à droite ou sous les états.
+- [x] Mémoriser la disposition de l'éditeur dans `localStorage`.
+- [x] Générer un répertoire `transitions.html` accessible depuis la navigation.
+- [x] Afficher la validité des liens dans les répertoires des états et transitions.
+- [x] Éditer les liens structurés portés par les transitions.
+- [x] Fournir des exemples valides et invalides pour les états et transitions.
+- [x] Remplacer la simulation des swimlanes en `flowchart` par la syntaxe
+  Mermaid native `swimlane-beta`.
 
 
 

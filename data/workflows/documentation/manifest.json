@@ -1,0 +1,29 @@
+{
+  "format": "workflow-data-manifest-v1",
+  "schema": "../../../schema/workflow-model.json",
+  "site": {
+    "theme": {
+      "pair": "aubergine",
+      "mode": "system"
+    },
+    "overview_workflow_id": "Phases_documentation",
+    "detail_workflow_id": "Documentation_workflows",
+    "reference_page": "guide.json",
+    "diagram": {
+      "node_spacing": 42,
+      "rank_spacing": 55,
+      "diagram_padding": 20,
+      "wrapping_width": 190,
+      "lane_title_wrap": 18,
+      "use_max_width": false
+    }
+  },
+  "files": [
+    "00-referentiel.json",
+    "00-phases.json",
+    "01-anatomie.json",
+    "02-presentation.json",
+    "03-interactions-limites.json",
+    "04-generation-site.json"
+  ]
+}

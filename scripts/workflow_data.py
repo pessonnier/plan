@@ -9,6 +9,17 @@ from typing import Any, Mapping
 
 MANIFEST_FORMAT = "workflow-data-manifest-v1"
 CATALOG_FORMAT = "workflow-site-catalog-v1"
+DEFAULT_DIAGRAM_CONFIG: dict[str, int | bool] = {
+    "node_spacing": 50,
+    "rank_spacing": 80,
+    "diagram_padding": 20,
+    "wrapping_width": 200,
+    "lane_title_wrap": 22,
+    "use_max_width": False,
+}
+SUPPORTED_THEME_PAIRS = {"ocean", "forest", "aubergine", "graphite"}
+SUPPORTED_THEME_MODES = {"system", "light", "dark"}
+DEFAULT_SITE_THEME = {"pair": "ocean", "mode": "system"}
 
 
 class WorkflowDataError(ValueError):
@@ -132,18 +143,87 @@ def schema_path_from_manifest(manifest_path: Path) -> Path | None:
     return (manifest_path.parent / schema).resolve()
 
 
-def site_config_from_manifest(manifest_path: Path) -> dict[str, str]:
+def site_config_from_manifest(manifest_path: Path) -> dict[str, Any]:
     manifest = load_json(manifest_path)
     if not is_manifest(manifest):
         return {}
     site = manifest.get("site", {})
     if not isinstance(site, Mapping):
         raise WorkflowDataError("La configuration 'site' du manifeste est invalide.")
-    config: dict[str, str] = {}
+    config: dict[str, Any] = {}
     for key in ("overview_workflow_id", "detail_workflow_id"):
         value = site.get(key)
         if value is not None:
             if not isinstance(value, str) or not value:
                 raise WorkflowDataError(f"site.{key} doit être un identifiant.")
             config[key] = value
+    reference_page = site.get("reference_page")
+    if reference_page is not None:
+        if (
+            not isinstance(reference_page, str)
+            or not reference_page
+            or Path(reference_page).name != reference_page
+            or not reference_page.endswith(".json")
+        ):
+            raise WorkflowDataError(
+                "site.reference_page doit être le nom d'un fichier JSON local."
+            )
+        config["reference_page"] = reference_page
+    diagram = site.get("diagram", {})
+    if not isinstance(diagram, Mapping):
+        raise WorkflowDataError("site.diagram doit être un objet.")
+    normalized_diagram = dict(DEFAULT_DIAGRAM_CONFIG)
+    for key in (
+        "node_spacing",
+        "rank_spacing",
+        "diagram_padding",
+        "wrapping_width",
+        "lane_title_wrap",
+    ):
+        value = diagram.get(key)
+        if value is None:
+            continue
+        if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+            raise WorkflowDataError(f"site.diagram.{key} doit être un entier positif ou nul.")
+        normalized_diagram[key] = value
+    use_max_width = diagram.get("use_max_width")
+    if use_max_width is not None:
+        if not isinstance(use_max_width, bool):
+            raise WorkflowDataError("site.diagram.use_max_width doit être un booléen.")
+        normalized_diagram["use_max_width"] = use_max_width
+    config["diagram"] = normalized_diagram
+    theme = site.get("theme", {})
+    if not isinstance(theme, Mapping):
+        raise WorkflowDataError("site.theme doit être un objet.")
+    pair = theme.get("pair", DEFAULT_SITE_THEME["pair"])
+    mode = theme.get("mode", DEFAULT_SITE_THEME["mode"])
+    if pair not in SUPPORTED_THEME_PAIRS:
+        raise WorkflowDataError(
+            f"site.theme.pair doit être l'une des valeurs "
+            f"{sorted(SUPPORTED_THEME_PAIRS)}."
+        )
+    if mode not in SUPPORTED_THEME_MODES:
+        raise WorkflowDataError(
+            f"site.theme.mode doit être l'une des valeurs "
+            f"{sorted(SUPPORTED_THEME_MODES)}."
+        )
+    config["theme"] = {"pair": pair, "mode": mode}
     return config
+
+
+def theme_config_from_catalog(catalog: Mapping[str, Any]) -> dict[str, str]:
+    """Return the default appearance of the common catalog pages."""
+    theme = catalog.get("theme", {})
+    if not isinstance(theme, Mapping):
+        raise WorkflowDataError("theme doit être un objet dans le catalogue.")
+    pair = theme.get("pair", DEFAULT_SITE_THEME["pair"])
+    mode = theme.get("mode", DEFAULT_SITE_THEME["mode"])
+    if pair not in SUPPORTED_THEME_PAIRS:
+        raise WorkflowDataError(
+            f"theme.pair doit être l'une des valeurs {sorted(SUPPORTED_THEME_PAIRS)}."
+        )
+    if mode not in SUPPORTED_THEME_MODES:
+        raise WorkflowDataError(
+            f"theme.mode doit être l'une des valeurs {sorted(SUPPORTED_THEME_MODES)}."
+        )
+    return {"pair": str(pair), "mode": str(mode)}

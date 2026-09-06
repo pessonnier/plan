@@ -195,9 +195,33 @@ def validate_references(
 
 def validate_business_consistency(document: Mapping[str, Any]) -> None:
     states = {record["etat_id"]: record for record in document.get("Etat", [])}
+    participants = {
+        record["participant_id"]: record
+        for record in document.get("Participant", [])
+    }
+    waterlines = {
+        record["ligne_eau_id"]: record for record in document.get("Ligne_eau", [])
+    }
     transitions = {
         record["transition_id"]: record for record in document.get("Transition", [])
     }
+    for index, waterline in enumerate(document.get("Ligne_eau", [])):
+        participant = participants[waterline["participant_id"]]
+        if participant["workflow_id"] != waterline["workflow_id"]:
+            raise DataValidationError(
+                f"Ligne_eau[{index}].participant_id appartient à un autre workflow."
+            )
+
+    for index, state in enumerate(document.get("Etat", [])):
+        waterline_id = state.get("ligne_eau_id")
+        if (
+            waterline_id is not None
+            and waterlines[waterline_id]["workflow_id"] != state["workflow_id"]
+        ):
+            raise DataValidationError(
+                f"Etat[{index}].ligne_eau_id appartient à un autre workflow."
+            )
+
     for index, transition in enumerate(document.get("Transition", [])):
         workflow_id = transition["workflow_id"]
         source = states[transition["etat_source_id"]]
@@ -206,6 +230,21 @@ def validate_business_consistency(document: Mapping[str, Any]) -> None:
             raise DataValidationError(
                 f"Transition[{index}] relie des états appartenant à un autre workflow."
             )
+        source_waterline = waterlines.get(source.get("ligne_eau_id"))
+        target_waterline = waterlines.get(target.get("ligne_eau_id"))
+        if source_waterline is not None and target_waterline is not None:
+            source_participant = source_waterline["participant_id"]
+            target_participant = target_waterline["participant_id"]
+            flow_type = transition.get("type_flux_bpmn", "sequence")
+            if flow_type == "sequence" and source_participant != target_participant:
+                raise DataValidationError(
+                    f"Transition[{index}] est un flux de séquence entre deux pools."
+                )
+            if flow_type == "message" and source_participant == target_participant:
+                raise DataValidationError(
+                    f"Transition[{index}] est un flux de message à l'intérieur "
+                    "d'un même pool."
+                )
 
     for index, rule in enumerate(document.get("Regle", [])):
         workflow_id = rule["workflow_id"]

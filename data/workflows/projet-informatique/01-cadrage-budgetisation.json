@@ -3,16 +3,21 @@
     {
       "etat_id": "Idee_projet",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Sponsor_metiers",
       "nom": "Idée de projet enregistrée",
-      "description": "<p>Le besoin initial, le sponsor et la valeur attendue sont enregistrés avant toute consommation significative de ressources.</p>",
+      "description": "<p>Ancien champ conservé uniquement pour la compatibilité des données historiques.</p>",
       "type_etat": "initial",
       "ordre": 10,
-      "contenu": "<ul><li>Problème métier</li><li>Sponsor</li><li>Bénéfices attendus</li></ul>",
-      "type_contenu": "html"
+      "contenu": "## Informations initiales\n\n- Problème métier\n- Sponsor\n- Bénéfices attendus\n\nExemples artificiels : [documentation valide](https://example.org/guide-projet), [état destinataire supprimé](states/Etat_supprime.html) et [protocole interdit](javascript:guide-obsolete).",
+      "type_contenu": "markdown",
+      "type_lien": "url",
+      "cible_lien": "https://example.org/projet-informatique",
+      "libelle_lien": "Ouvrir l'exemple de référence"
     },
     {
       "etat_id": "Opportunite_qualifiee",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Sponsor_metiers",
       "nom": "Opportunité qualifiée",
       "description": "<p>La cohérence stratégique, les bénéfices, les dépendances et les principaux risques ont été examinés.</p>",
       "type_etat": "validation",
@@ -23,6 +28,7 @@
     {
       "etat_id": "Cadrage",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Responsable_conduite_projet",
       "nom": "Cadrage en cours",
       "description": "<p>Le périmètre, la gouvernance, le macro-planning, les hypothèses et les risques sont formalisés.</p>",
       "type_etat": "normal",
@@ -33,6 +39,7 @@
     {
       "etat_id": "Budget_estime",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Responsable_conduite_projet",
       "nom": "Budget estimé",
       "description": "<p>Les coûts d'investissement, de fonctionnement, de licences, d'infrastructure et de maintenance sont consolidés.</p>",
       "type_etat": "normal",
@@ -43,6 +50,7 @@
     {
       "etat_id": "Budget_valide",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Pilotage_gouvernance",
       "nom": "Budget validé",
       "description": "<p>L'enveloppe, le centre de coûts et l'autorisation d'engagement ont été validés par les instances compétentes.</p>",
       "type_etat": "validation",
@@ -56,12 +64,16 @@
     {
       "etat_id": "Budget_a_revoir",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Pilotage_gouvernance",
       "nom": "Budget à revoir",
       "description": "<p>Le dossier financier est incomplet, non soutenable ou nécessite un arbitrage complémentaire.</p>",
       "type_etat": "blocage",
       "ordre": 60,
       "contenu": "<p>Les hypothèses doivent être corrigées avant une nouvelle présentation.</p>",
-      "type_contenu": "html"
+      "type_contenu": "html",
+      "type_lien": "page_etat",
+      "cible_lien": "states/Etat_budget_supprime.html",
+      "libelle_lien": "Exemple invalide vers un état supprimé"
     }
   ],
   "Transition": [
@@ -74,6 +86,9 @@
       "condition": "Sponsor identifié et note d'opportunité approuvée.",
       "role_autorise": "Sponsor",
       "action_associee": "Autoriser le cadrage.",
+      "type_lien": "url",
+      "cible_lien": "https://example.org/projet-informatique/opportunite",
+      "libelle_lien": "Consulter l’exemple de décision d’opportunité",
       "actif": true
     },
     {
@@ -107,6 +122,9 @@
       "condition": "Enveloppe et coûts récurrents approuvés.",
       "role_autorise": "Finance",
       "action_associee": "Enregistrer l'autorisation budgétaire.",
+      "type_lien": "page_phase",
+      "cible_lien": "phases/02-specifications-conception-marche.html",
+      "libelle_lien": "Ouvrir la phase suivante",
       "actif": true
     },
     {
@@ -118,6 +136,9 @@
       "condition": "Écart, risque financier ou pièce manquante.",
       "role_autorise": "Finance",
       "action_associee": "Notifier les corrections attendues.",
+      "type_lien": "page_etat",
+      "cible_lien": "states/Transition_budget_supprimee.html",
+      "libelle_lien": "Exemple invalide vers une page supprimée",
       "actif": true
     },
     {
