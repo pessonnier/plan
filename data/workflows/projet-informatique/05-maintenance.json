@@ -3,6 +3,7 @@
     {
       "etat_id": "Maintenance",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Maintenance_service",
       "nom": "Maintenance courante",
       "description": "<p>Le service est exploité selon ses niveaux de service avec suivi des incidents, problèmes, obsolescences, capacités et coûts.</p>",
       "type_etat": "normal",
@@ -13,6 +14,7 @@
     {
       "etat_id": "Evolution",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Realisation_qualite",
       "nom": "Évolution en réalisation",
       "description": "<p>Une évolution fonctionnelle ou technique est développée dans un périmètre maîtrisé et soumise aux contrôles adaptés.</p>",
       "type_etat": "normal",
@@ -23,6 +25,7 @@
     {
       "etat_id": "Correction",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Realisation_qualite",
       "nom": "Correction en réalisation",
       "description": "<p>Une anomalie ou vulnérabilité est corrigée avec priorité, traçabilité, tests de non-régression et procédure de déploiement.</p>",
       "type_etat": "normal",
@@ -33,6 +36,7 @@
     {
       "etat_id": "Revalidation",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Qualite_tests",
       "nom": "Revalidation de maintenance",
       "description": "<p>La livraison de maintenance a passé les contrôles de qualité, sécurité, recette et exploitabilité proportionnés à son risque.</p>",
       "type_etat": "validation",
@@ -43,6 +47,7 @@
     {
       "etat_id": "Fin_maintenance_decidee",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Pilotage_gouvernance",
       "nom": "Fin de maintenance décidée",
       "description": "<p>Le sponsor et les responsables du SI ont décidé la fin de vie sur la base des coûts, risques, usages et solutions de remplacement.</p>",
       "type_etat": "validation",

@@ -17,9 +17,13 @@ from html_rendering import (
     workflow_context,
     write_text,
 )
-from generate_mermaid import generate_dataset_flowchart
+from generate_mermaid import (
+    generate_dataset_flowchart,
+    select_participants,
+    select_waterlines,
+)
 from validate_workflow_data import DataValidationError, validate_source
-from workflow_data import WorkflowDataError
+from workflow_data import WorkflowDataError, site_config_from_manifest
 
 
 def render_workflow_page(
@@ -29,8 +33,21 @@ def render_workflow_page(
     mermaid_url: str = DEFAULT_MERMAID_URL,
 ) -> str:
     document = validate_source(source, schema)
+    site_config = site_config_from_manifest(source)
+    diagram_config = site_config.get("diagram", {})
     workflow, states, transitions, _, _ = workflow_context(document, workflow_id)
-    flowchart = generate_dataset_flowchart(workflow, states, transitions)
+    participants = select_participants(document, str(workflow["workflow_id"]))
+    waterlines = select_waterlines(
+        document, str(workflow["workflow_id"]), states, participants
+    )
+    flowchart = generate_dataset_flowchart(
+        workflow,
+        states,
+        transitions,
+        waterlines=waterlines,
+        participants=participants,
+        lane_title_wrap=diagram_config.get("lane_title_wrap"),
+    )
     cards = "\n".join(state_card(state) for state in states)
     body = f"""\
 <header class="site-header">
@@ -41,7 +58,7 @@ def render_workflow_page(
   <div class="content" style="grid-column: 1 / -1">
     {diagram_panel("Vue processus", flowchart)}
     <section class="panel">
-      <h2>Description des états</h2>
+      <h2>Textes des états</h2>
       <div class="state-grid">
         {cards}
       </div>
@@ -54,6 +71,7 @@ def render_workflow_page(
         body=body,
         mermaid_url=mermaid_url,
         inline_assets=True,
+        diagram_config=diagram_config,
     )
 
 

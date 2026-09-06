@@ -7,9 +7,36 @@
         { "name": "workflow_id", "type": "text", "required": true },
         { "name": "nom", "type": "text", "required": true },
         { "name": "description", "type": "long_text", "required": false },
-        { "name": "type_diagramme", "type": "choice", "values": ["flowchart", "stateDiagram"], "required": true },
-        { "name": "orientation", "type": "choice", "values": ["TD", "LR", "BT", "RL"], "required": false },
+        { "name": "type_diagramme", "type": "choice", "values": ["swimlane", "flowchart", "stateDiagram"], "required": true },
+        { "name": "orientation", "type": "choice", "values": ["TB", "TD", "LR", "BT", "RL"], "required": false },
         { "name": "actif", "type": "boolean", "required": true }
+      ]
+    },
+    {
+      "name": "Participant",
+      "description": "Décrit un participant BPMN représenté graphiquement par un pool.",
+      "fields": [
+        { "name": "participant_id", "type": "text", "required": true },
+        { "name": "workflow_id", "type": "reference", "references": "Workflow.workflow_id", "required": true },
+        { "name": "nom", "type": "text", "required": true },
+        { "name": "description", "type": "long_text", "required": false },
+        { "name": "processus_visible", "type": "boolean", "required": true },
+        { "name": "ordre", "type": "number", "required": false }
+      ]
+    },
+    {
+      "name": "Ligne_eau",
+      "description": "Décrit une lane BPMN qui partitionne les nœuds d'un processus au sein du pool d'un participant.",
+      "fields": [
+        { "name": "ligne_eau_id", "type": "text", "required": true },
+        { "name": "workflow_id", "type": "reference", "references": "Workflow.workflow_id", "required": true },
+        { "name": "participant_id", "type": "reference", "references": "Participant.participant_id", "required": true },
+        { "name": "nom", "type": "text", "required": true },
+        { "name": "description", "type": "long_text", "required": false },
+        { "name": "type_partition", "type": "choice", "values": ["role", "entite", "systeme", "autre"], "required": true },
+        { "name": "role_id", "type": "reference", "references": "Role.role_id", "required": false },
+        { "name": "ordre", "type": "number", "required": false },
+        { "name": "couleur", "type": "text", "required": false }
       ]
     },
     {
@@ -18,6 +45,7 @@
       "fields": [
         { "name": "etat_id", "type": "text", "required": true },
         { "name": "workflow_id", "type": "reference", "references": "Workflow.workflow_id", "required": true },
+        { "name": "ligne_eau_id", "type": "reference", "references": "Ligne_eau.ligne_eau_id", "required": false },
         { "name": "nom", "type": "text", "required": true },
         { "name": "description", "type": "long_text", "required": false },
         { "name": "type_etat", "type": "choice", "values": ["initial", "normal", "validation", "blocage", "final"], "required": true },
@@ -47,6 +75,7 @@
         { "name": "type_lien", "type": "choice", "values": ["page_phase", "page_etat", "url"], "required": false },
         { "name": "cible_lien", "type": "text", "required": false },
         { "name": "libelle_lien", "type": "text", "required": false },
+        { "name": "type_flux_bpmn", "type": "choice", "values": ["sequence", "message"], "required": false },
         { "name": "actif", "type": "boolean", "required": true }
       ]
     },
@@ -81,7 +110,7 @@
       "fields": [
         { "name": "generation_id", "type": "text", "required": true },
         { "name": "workflow_id", "type": "reference", "references": "Workflow.workflow_id", "required": true },
-        { "name": "type_diagramme", "type": "choice", "values": ["flowchart", "stateDiagram"], "required": true },
+        { "name": "type_diagramme", "type": "choice", "values": ["swimlane", "flowchart", "stateDiagram"], "required": true },
         { "name": "code_mermaid", "type": "long_text", "required": true },
         { "name": "date_generation", "type": "datetime", "required": true },
         { "name": "version", "type": "text", "required": false }

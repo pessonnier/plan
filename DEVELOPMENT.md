@@ -8,6 +8,25 @@ Toute évolution du modèle de données, des règles de workflow ou de la géné
 
 Le maintien de la documentation est obligatoire.
 
+## Fonctionnement hors ligne obligatoire
+
+Le projet et les sites générés par défaut doivent fonctionner sans accès à
+Internet, y compris lors d'une ouverture directe en `file://` dans Firefox.
+Toute dépendance JavaScript nécessaire au rendu doit être versionnée sous
+`scripts/vendor`, contrôlée par une somme SHA-256 et copiée ou incorporée dans
+la sortie. L'ajout d'un CDN, d'une police distante ou de toute autre ressource
+réseau dans le chemin d'exécution par défaut est interdit.
+
+Après une mise à jour de dépendance, exécuter :
+
+```powershell
+.\scripts\update_javascript_dependencies.ps1 -Check
+py scripts/generate_workflow_site.py `
+  data/workflows/catalog.json `
+  --output build/site-workflows
+py -m unittest discover -s tests -v
+```
+
 ## Traçabilité spécifications-code-tests
 
 Toute exigence fonctionnelle doit recevoir un identifiant stable `REQ-*` dans
@@ -97,9 +116,12 @@ Avant fusion, vérifier que :
 - les fichiers de données sont compatibles avec `schema/workflow-model.json` ;
 - les contenus HTML issus des données sont filtrés avant publication ;
 - les liens de navigation du site statique sont couverts par les tests ;
-- les liens `page_phase`, `page_etat` et `url` respectent leur format ;
+- les liens `page_phase` et `url` respectent leur format ;
+- les anciennes destinations `page_etat` sont signalées sans bloquer l'export ;
 - la matrice relie chaque exigence au code et aux deux niveaux de test ;
 - les tests automatisés de compatibilité et de génération réussissent.
+- le site généré ne contient aucune dépendance réseau dans son fonctionnement
+  par défaut et le verrouillage des dépendances locales est valide.
 
 ## Vérifications avant contribution
 

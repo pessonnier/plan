@@ -1,0 +1,133 @@
+{
+  "Workflow": [
+    {
+      "workflow_id": "Phases_documentation",
+      "nom": "Documentation des workflows",
+      "description": "Parcours de découverte des éléments, de leur présentation et de leurs interactions.",
+      "type_diagramme": "flowchart",
+      "orientation": "LR",
+      "actif": true
+    },
+    {
+      "workflow_id": "Documentation_workflows",
+      "nom": "Documentation des workflows",
+      "description": "Workflow de référence qui nomme les éléments d'un schéma et renvoie vers un catalogue visuel complet des possibilités Mermaid.",
+      "type_diagramme": "swimlane",
+      "orientation": "LR",
+      "actif": false
+    }
+  ],
+  "Participant": [
+    {
+      "participant_id": "Documentation",
+      "workflow_id": "Documentation_workflows",
+      "nom": "Documentation",
+      "description": "Ensemble des notions décrites dans le guide.",
+      "processus_visible": true,
+      "ordre": 10
+    },
+    {
+      "participant_id": "Publication_site",
+      "workflow_id": "Documentation_workflows",
+      "nom": "Publication du site",
+      "description": "Utilisateur, console TUI, scripts Python et fichiers HTML produits.",
+      "processus_visible": true,
+      "ordre": 20
+    }
+  ],
+  "Ligne_eau": [
+    {
+      "ligne_eau_id": "Structure",
+      "workflow_id": "Documentation_workflows",
+      "participant_id": "Documentation",
+      "nom": "Structure du workflow",
+      "description": "Organisation générale du processus.",
+      "type_partition": "autre",
+      "ordre": 10,
+      "couleur": "#dbeafe"
+    },
+    {
+      "ligne_eau_id": "Acteurs",
+      "workflow_id": "Documentation_workflows",
+      "participant_id": "Documentation",
+      "nom": "Acteurs et responsabilités",
+      "description": "Participants, rôles et lignes d'eau.",
+      "type_partition": "role",
+      "ordre": 20,
+      "couleur": "#dcfce7"
+    },
+    {
+      "ligne_eau_id": "Elements",
+      "workflow_id": "Documentation_workflows",
+      "participant_id": "Documentation",
+      "nom": "États et transitions",
+      "description": "Nœuds, formes, liens et conditions.",
+      "type_partition": "autre",
+      "ordre": 30,
+      "couleur": "#fef3c7"
+    },
+    {
+      "ligne_eau_id": "Presentation",
+      "workflow_id": "Documentation_workflows",
+      "participant_id": "Documentation",
+      "nom": "Présentation et contenu",
+      "description": "Couleurs, texte, listes et infobulles.",
+      "type_partition": "autre",
+      "ordre": 40,
+      "couleur": "#fce7f3"
+    },
+    {
+      "ligne_eau_id": "Technique",
+      "workflow_id": "Documentation_workflows",
+      "participant_id": "Documentation",
+      "nom": "Configuration et limites",
+      "description": "Dimensions, accessibilité et fonctionnement hors ligne.",
+      "type_partition": "systeme",
+      "ordre": 50,
+      "couleur": "#ede9fe"
+    },
+    {
+      "ligne_eau_id": "Actions_utilisateur",
+      "workflow_id": "Documentation_workflows",
+      "participant_id": "Publication_site",
+      "nom": "Actions de l'utilisateur",
+      "description": "Choix des sources, du thème et de la portée de génération.",
+      "type_partition": "role",
+      "ordre": 60,
+      "couleur": "#dbeafe"
+    },
+    {
+      "ligne_eau_id": "Console_exploitation",
+      "workflow_id": "Documentation_workflows",
+      "participant_id": "Publication_site",
+      "nom": "Console TUI",
+      "description": "Enregistrement des réglages et lancement des opérations.",
+      "type_partition": "systeme",
+      "ordre": 70,
+      "couleur": "#dcfce7"
+    },
+    {
+      "ligne_eau_id": "Moteur_generation",
+      "workflow_id": "Documentation_workflows",
+      "participant_id": "Publication_site",
+      "nom": "Scripts de génération",
+      "description": "Chargement, fusion, validation et rendu HTML ou Mermaid.",
+      "type_partition": "systeme",
+      "ordre": 80,
+      "couleur": "#fef3c7"
+    },
+    {
+      "ligne_eau_id": "Fichiers_produits",
+      "workflow_id": "Documentation_workflows",
+      "participant_id": "Publication_site",
+      "nom": "Résultats et contrôle",
+      "description": "Fichiers générés, journal d'exécution et revue utilisateur.",
+      "type_partition": "autre",
+      "ordre": 90,
+      "couleur": "#fce7f3"
+    }
+  ],
+  "Role": [],
+  "Regle": [],
+  "Generation_Mermaid": []
+}

@@ -1,0 +1,78 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Formes",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Elements",
+      "nom": "Formes de nœuds",
+      "description": "<p>Mermaid 11 offre les formes historiques et un catalogue étendu : processus, décision, document, base de données, terminal, stockage, personne, icône, image et bien d'autres.</p><p>L'éditeur JSON actuel choisit la forme selon le type d'état ; le guide montre aussi les formes disponibles uniquement en code Mermaid.</p>",
+      "type_etat": "normal",
+      "ordre": 60,
+      "couleur": "#fed7aa"
+    },
+    {
+      "etat_id": "Couleurs_styles",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Presentation",
+      "nom": "Couleurs et styles",
+      "description": "<p>Une couleur peut être portée par un état ou une ligne d'eau. Mermaid permet aussi les styles directs, les classes réutilisables et le style des liens.</p>",
+      "type_etat": "normal",
+      "ordre": 70,
+      "couleur": "#fbcfe8"
+    },
+    {
+      "etat_id": "Textes_puces",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Presentation",
+      "nom": "Textes, retours et puces",
+      "description": "<p>Les fiches acceptent du contenu HTML filtré, notamment :</p><ul><li>des paragraphes ;</li><li>des listes à puces ou numérotées ;</li><li>du gras, de l'italique et des liens HTTP(S).</li></ul><p>Dans un nœud Mermaid, on utilise du texte, du HTML autorisé ou une chaîne Markdown.</p>",
+      "type_etat": "normal",
+      "ordre": 80,
+      "couleur": "#f9a8d4"
+    },
+    {
+      "etat_id": "Orientation_groupes",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Structure",
+      "nom": "Orientation et groupes",
+      "description": "<p>Les orientations disponibles sont TB/TD, BT, LR et RL. Les sous-graphes regroupent des nœuds ; dans un diagramme swimlane, les sous-graphes de premier niveau deviennent les couloirs.</p>",
+      "type_etat": "normal",
+      "ordre": 90,
+      "couleur": "#bfdbfe"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Choisir_forme",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Transition",
+      "etat_cible_id": "Formes",
+      "libelle": "choisir la notation",
+      "actif": true
+    },
+    {
+      "transition_id": "Appliquer_style",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Formes",
+      "etat_cible_id": "Couleurs_styles",
+      "libelle": "mettre en évidence",
+      "actif": true
+    },
+    {
+      "transition_id": "Rediger_contenu",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Couleurs_styles",
+      "etat_cible_id": "Textes_puces",
+      "libelle": "documenter",
+      "actif": true
+    },
+    {
+      "transition_id": "Organiser_lecture",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Textes_puces",
+      "etat_cible_id": "Orientation_groupes",
+      "libelle": "organiser la lecture",
+      "actif": true
+    }
+  ]
+}

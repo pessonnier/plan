@@ -37,7 +37,7 @@ class WorkflowCliFunctionalTests(unittest.TestCase):
         result = self.run_cli("validate_workflow_data.py", MANIFEST)
 
         self.assertEqual(0, result.returncode, result.stderr)
-        self.assertIn("Compatibilité validée: 6 tables, 108 enregistrements.", result.stdout)
+        self.assertIn("Compatibilité validée: 8 tables, 122 enregistrements.", result.stdout)
 
     def test_validate_data_cli_rejects_dangling_reference(self):
         data = json.loads(EXAMPLE.read_text(encoding="utf-8"))
@@ -71,7 +71,7 @@ class WorkflowCliFunctionalTests(unittest.TestCase):
 
             self.assertEqual(0, result.returncode, result.stderr)
             content = output.read_text(encoding="utf-8")
-            self.assertIn("flowchart LR", content)
+            self.assertIn("swimlane-beta LR", content)
             self.assertIn("stateDiagram-v2", content)
             self.assertIn("Decommissionne --> [*]", content)
 
@@ -84,8 +84,10 @@ class WorkflowCliFunctionalTests(unittest.TestCase):
 
             self.assertEqual(0, result.returncode, result.stderr)
             content = output.read_text(encoding="utf-8")
-            self.assertLess(content.index("flowchart LR"), content.index("Description des états"))
-            self.assertNotIn("stateDiagram-v2", content)
+            self.assertLess(
+                content.index("flowchart LR"), content.index("Textes des états")
+            )
+            self.assertNotIn("stateDiagram-v2", content.split("<script>", 1)[0])
             self.assertIn("La personne publique ou l&#x27;organisation", content)
 
     def test_static_site_cli_end_to_end(self):
@@ -98,14 +100,14 @@ class WorkflowCliFunctionalTests(unittest.TestCase):
             self.assertEqual(0, result.returncode, result.stderr)
             self.assertTrue((output / "index.html").is_file())
             self.assertTrue((output / "etats.html").is_file())
+            self.assertTrue((output / "transitions.html").is_file())
             self.assertFalse((output / "workflow.html").exists())
-            self.assertEqual(34, len(list((output / "states").glob("*.html"))))
-            maintenance = (output / "states" / "Maintenance.html").read_text(
-                encoding="utf-8"
-            )
-            self.assertIn("Fin_maintenance_decidee.html", maintenance)
+            self.assertFalse((output / "states").exists())
             index = (output / "index.html").read_text(encoding="utf-8")
             all_states = (output / "etats.html").read_text(encoding="utf-8")
+            all_transitions = (output / "transitions.html").read_text(
+                encoding="utf-8"
+            )
             script = (output / "assets" / "app.js").read_text(encoding="utf-8")
             self.assertIn('<script defer src="assets/app.js"></script>', index)
             self.assertNotIn('type="module"', index)
@@ -134,12 +136,32 @@ class WorkflowCliFunctionalTests(unittest.TestCase):
                 '&quot;phases/01-cadrage-budgetisation.html&quot;',
                 index,
             )
-            self.assertIn("Tous les états", all_states)
-            self.assertIn("states/Decommissionne.html", all_states)
-            self.assertIn("<strong>États</strong>", all_states)
+            self.assertIn("Répertoire des états", all_states)
+            self.assertIn("Répertoire des transitions", all_transitions)
+            self.assertIn("Invalide", all_transitions)
+            self.assertNotIn("states/Decommissionne.html", all_states)
+            self.assertNotIn("<strong>États</strong>", all_states)
             first_phase = (
                 output / "phases" / "01-cadrage-budgetisation.html"
             ).read_text(encoding="utf-8")
+            self.assertIn(
+                'subgraph Ligne_eau_Pilotage_gouvernance '
+                '[&quot;Direction&lt;br/&gt;financière&quot;]',
+                first_phase,
+            )
+            self.assertIn("swimlane-beta LR", first_phase)
+            self.assertNotIn("subgraph Participant_Organisation_porteuse", first_phase)
+            self.assertIn(
+                'subgraph Ligne_eau_Responsable_conduite_projet '
+                '[&quot;Responsable de&lt;br/&gt;conduite de projet&quot;]',
+                first_phase,
+            )
+            self.assertIn(
+                'subgraph Ligne_eau_Sponsor_metiers '
+                '[&quot;Sponsor métier&quot;]',
+                first_phase,
+            )
+            self.assertNotIn("Organisation porteuse du projet —", first_phase)
             self.assertIn(
                 'click Budget_valide '
                 '&quot;../phases/02-specifications-conception-marche.html&quot;',
@@ -169,16 +191,25 @@ class WorkflowCliFunctionalTests(unittest.TestCase):
 
             self.assertEqual(0, result.returncode, result.stderr)
             content = output.read_text(encoding="utf-8")
-            self.assertNotIn("onclick", content)
-            self.assertNotIn("<script>alert(2)</script>", content)
-            self.assertNotIn("javascript:alert(3)", content)
-            self.assertIn("<p>Documenté</p>", content)
+            body = content.split("<body>", 1)[1].split("</body>", 1)[0]
+            document_body = body.split("<script", 1)[0]
+            self.assertNotIn("onclick", document_body)
+            self.assertNotIn("<script>alert(2)</script>", document_body)
+            self.assertNotIn("javascript:alert(3)", document_body)
+            self.assertIn("<p>Documenté</p>", document_body)
 
     def test_traceability_cli(self):
         result = self.run_cli("validate_traceability.py")
 
         self.assertEqual(0, result.returncode, result.stderr)
-        self.assertIn("Traçabilité validée: 8 exigences.", result.stdout)
+        self.assertIn("Traçabilité validée: 10 exigences.", result.stdout)
+
+    def test_tui_headless_list_does_not_require_textual(self):
+        result = self.run_cli("workflow_tui.py", "--list", "--catalog", CATALOG)
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn("documentation\tDocumentation", result.stdout)
+        self.assertIn("projet-informatique\tProjet informatique", result.stdout)
 
     def test_catalog_site_cli_end_to_end(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -197,10 +228,61 @@ class WorkflowCliFunctionalTests(unittest.TestCase):
             self.assertTrue(
                 (output / "analyse-statique-code" / "index.html").is_file()
             )
+            self.assertTrue(
+                (output / "projet-informatique" / "transitions.html").is_file()
+            )
             analysis_index = (
                 output / "analyse-statique-code" / "index.html"
             ).read_text(encoding="utf-8")
             self.assertIn("flowchart LR", analysis_index)
+
+    def test_catalog_editor_cli_end_to_end(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "catalog"
+            result = self.run_cli(
+                "generate_workflow_site.py", CATALOG, "--output", output
+            )
+
+            self.assertEqual(0, result.returncode, result.stderr)
+            editor = (output / "editor.html").read_text(encoding="utf-8")
+            editor_script = (output / "assets" / "editor.js").read_text(
+                encoding="utf-8"
+            )
+            self.assertIn('id="workflow-source"', editor)
+            self.assertIn('"workflow_id":"Analyse_statique_code"', editor)
+            self.assertIn("Ajouter l’état", editor)
+            self.assertIn('id="state-picker"', editor)
+            self.assertIn("Nouvel état…", editor)
+            self.assertIn("Supprimer l’état", editor)
+            self.assertIn("Ouvrir le répertoire des états", editor)
+            self.assertNotIn('id="state-rows"', editor)
+            self.assertIn('id="toggle-editor-layout"', editor)
+            self.assertIn("Placer les transitions en dessous", editor)
+            self.assertIn("Format du texte de l'état", editor)
+            self.assertIn("Texte de l'état", editor)
+            self.assertNotIn('id="state-description"', editor)
+            self.assertIn("Validité des liens des états et des transitions", editor)
+            self.assertIn(
+                "[état destinataire supprimé](states/Etat_supprime.html)",
+                editor,
+            )
+            self.assertIn("Vocabulaire à employer", editor)
+            self.assertIn("il ne bloque ni la copie", editor)
+            self.assertIn("Ajouter la transition", editor)
+            self.assertIn('id="transition-picker"', editor)
+            self.assertIn("Nouvelle transition…", editor)
+            self.assertIn("Supprimer la transition", editor)
+            self.assertIn('id="transition-link-target"', editor)
+            self.assertNotIn('id="transition-rows"', editor)
+            self.assertIn("Enregistrer le JSON sous…", editor)
+            self.assertIn("validateDocument", editor_script)
+            self.assertIn("stateLinkResults", editor_script)
+            self.assertIn("renderRecordLinks", editor_script)
+            self.assertIn("loadState", editor_script)
+            self.assertIn("workflow-editor-transitions-below", editor_script)
+            self.assertIn('classList.toggle("transitions-below"', editor_script)
+            self.assertIn("loadTransition", editor_script)
+            self.assertIn("application/json;charset=utf-8", editor_script)
 
 
 if __name__ == "__main__":

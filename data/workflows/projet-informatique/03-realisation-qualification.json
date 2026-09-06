@@ -3,6 +3,7 @@
     {
       "etat_id": "Realisation",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Realisation_qualite",
       "nom": "Réalisation en cours",
       "description": "<p>La solution est développée ou configurée avec gestion de versions, revues, intégration continue et traçabilité des changements.</p>",
       "type_etat": "normal",
@@ -13,6 +14,7 @@
     {
       "etat_id": "Revue_code",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Qualite_tests",
       "nom": "Revue technique validée",
       "description": "<p>Les revues de code, analyses de dépendances, contrôles de secrets et critères qualité ont atteint les seuils définis.</p>",
       "type_etat": "validation",
@@ -23,6 +25,7 @@
     {
       "etat_id": "Tests_integration",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Qualite_tests",
       "nom": "Tests d'intégration",
       "description": "<p>Les interfaces, migrations, performances, sauvegardes et scénarios de reprise sont vérifiés dans un environnement contrôlé.</p>",
       "type_etat": "normal",
@@ -33,6 +36,7 @@
     {
       "etat_id": "Recette_metier",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Metiers_validation",
       "nom": "Recette métier",
       "description": "<p>Les utilisateurs habilités exécutent les scénarios d'acceptation et vérifient l'adéquation aux exigences validées.</p>",
       "type_etat": "validation",
@@ -43,6 +47,7 @@
     {
       "etat_id": "Homologation_securite",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Securite_homologation",
       "nom": "Homologation de sécurité",
       "description": "<p>Les risques résiduels, tests de sécurité, mesures de protection et responsabilités sont examinés par l'autorité compétente.</p>",
       "type_etat": "validation",
@@ -53,6 +58,7 @@
     {
       "etat_id": "Pret_pour_MEP",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Qualite_tests",
       "nom": "Prêt pour mise en production",
       "description": "<p>Les validations fonctionnelles, techniques, sécurité et documentaires sont réunies pour préparer le changement.</p>",
       "type_etat": "validation",

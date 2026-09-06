@@ -19,7 +19,7 @@ class TraceabilityTests(unittest.TestCase):
     def test_project_traceability_matrix_is_valid(self):
         count = validate_traceability.validate_traceability(MATRIX, PROJECT_ROOT)
 
-        self.assertEqual(8, count)
+        self.assertEqual(10, count)
 
     def test_missing_symbol_is_rejected(self):
         matrix = json.loads(MATRIX.read_text(encoding="utf-8"))

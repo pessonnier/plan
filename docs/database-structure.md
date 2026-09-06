@@ -9,18 +9,24 @@ Le modèle est volontairement compatible avec une base de type Grist : les table
 ```mermaid
 flowchart LR
     Workflow[Workflow]
+    Participant[Participant]
+    LigneEau[Ligne_eau]
     Etat[Etat]
     Transition[Transition]
     Role[Role]
     Regle[Regle]
     Generation[Generation_Mermaid]
 
+    Workflow --> Participant
+    Participant --> LigneEau
     Workflow --> Etat
     Workflow --> Transition
     Workflow --> Regle
     Workflow --> Generation
+    LigneEau --> Etat
     Etat --> Transition
     Role --> Transition
+    Role --> LigneEau
     Etat --> Regle
     Transition --> Regle
 ```
@@ -34,9 +40,45 @@ La table `Workflow` décrit un processus métier ou un circuit de suivi.
 | `workflow_id` | texte | oui | Identifiant stable du workflow. |
 | `nom` | texte | oui | Nom lisible du workflow. |
 | `description` | texte long | non | Description fonctionnelle du workflow. |
-| `type_diagramme` | choix | oui | Type de génération Mermaid : `flowchart` ou `stateDiagram`. |
-| `orientation` | choix | non | Orientation Mermaid : `TD`, `LR`, `BT`, `RL`. |
+| `type_diagramme` | choix | oui | Type de génération Mermaid : `swimlane`, `flowchart` ou `stateDiagram`. |
+| `orientation` | choix | non | Orientation Mermaid : `TB`, `TD`, `LR`, `BT`, `RL`. |
 | `actif` | booléen | oui | Indique si le workflow est utilisable. |
+
+## Table `Participant`
+
+La table `Participant` représente un acteur ou une organisation propriétaire
+d'une ou plusieurs lignes d'eau. Dans les diagrammes Mermaid `swimlane-beta`,
+le participant n'est pas généré comme un sous-graphe imbriqué et son nom n'est
+pas préfixé au libellé du couloir.
+
+| Champ | Type | Obligatoire | Description |
+|---|---|---:|---|
+| `participant_id` | texte | oui | Identifiant stable du participant/pool. |
+| `workflow_id` | référence `Workflow` | oui | Workflow auquel appartient le participant. |
+| `nom` | texte | oui | Libellé affiché sur le pool. |
+| `description` | texte long | non | Rôle du participant dans la collaboration. |
+| `processus_visible` | booléen | oui | Indique si le processus interne du pool est affiché. |
+| `ordre` | nombre | non | Ordre de présentation des pools. |
+
+## Table `Ligne_eau`
+
+La table `Ligne_eau` représente une partition de responsabilité. Lorsqu'un
+workflow contient des lignes d'eau, chaque ligne d'eau devient un couloir
+Mermaid `swimlane-beta` de premier niveau. Elle classe les nœuds par rôle,
+entité, système ou autre critère homogène ; elle ne représente pas une phase du
+processus.
+
+| Champ | Type | Obligatoire | Description |
+|---|---|---:|---|
+| `ligne_eau_id` | texte | oui | Identifiant stable et compatible Mermaid. |
+| `workflow_id` | référence `Workflow` | oui | Workflow auquel appartient la ligne d'eau. |
+| `participant_id` | référence `Participant` | oui | Participant propriétaire de la ligne d'eau. |
+| `nom` | texte | oui | Rôle, entité ou système affiché sur le couloir. |
+| `description` | texte long | non | Responsabilité couverte par la partition. |
+| `type_partition` | choix | oui | `role`, `entite`, `systeme` ou `autre`. |
+| `role_id` | référence `Role` | non | Rôle métier représenté, lorsqu'il existe dans le référentiel. |
+| `ordre` | nombre | non | Ordre de présentation des lignes d'eau. |
+| `couleur` | texte | non | Indication de style éventuelle pour l'interface. |
 
 ## Table `Etat`
 
@@ -46,15 +88,16 @@ La table `Etat` décrit les états possibles d'un workflow.
 |---|---|---:|---|
 | `etat_id` | texte | oui | Identifiant stable et compatible Mermaid. |
 | `workflow_id` | référence `Workflow` | oui | Workflow auquel appartient l'état. |
+| `ligne_eau_id` | référence `Ligne_eau` | non | Ligne d'eau dans laquelle présenter l'état. |
 | `nom` | texte | oui | Libellé affiché dans les vues. |
-| `description` | texte long | non | Explication du rôle de l'état. |
+| `description` | texte long | non | Champ historique lu en repli ; ne plus l'utiliser dans les nouvelles données. |
 | `type_etat` | choix | oui | `initial`, `normal`, `validation`, `blocage`, `final`. |
 | `ordre` | nombre | non | Ordre de présentation. |
-| `contenu` | texte long | non | Contenu documentaire associé à l'état. |
-| `type_contenu` | choix | non | `markdown`, `html`, `texte`. |
+| `contenu` | texte long | non | Texte canonique de l'état. |
+| `type_contenu` | choix | non | Format du texte : `markdown`, `html`, `texte`. |
 | `couleur` | texte | non | Indication de style éventuelle pour Mermaid ou l'interface. |
 | `type_lien` | choix | non | Nature du lien : `page_phase`, `page_etat` ou `url`. |
-| `cible_lien` | texte | non | Page interne ou URL ciblée par l'état. |
+| `cible_lien` | texte | non | Destination du lien portée par l'état. |
 | `libelle_lien` | texte | non | Libellé accessible décrivant la navigation. |
 
 ## Table `Transition`
@@ -76,6 +119,7 @@ La table `Transition` porte la logique principale du workflow.
 | `type_lien` | choix | non | Nature du lien : `page_phase`, `page_etat` ou `url`. |
 | `cible_lien` | texte | non | Page interne ou URL associée à la transition. |
 | `libelle_lien` | texte | non | Libellé accessible décrivant la navigation. |
+| `type_flux_bpmn` | choix | non | `sequence` par défaut, ou `message` entre deux pools. |
 | `actif` | booléen | oui | Indique si la transition est utilisable. |
 
 ## Table `Role`
@@ -113,7 +157,7 @@ La table `Generation_Mermaid` conserve les représentations Mermaid générées 
 |---|---|---:|---|
 | `generation_id` | texte | oui | Identifiant de génération. |
 | `workflow_id` | référence `Workflow` | oui | Workflow représenté. |
-| `type_diagramme` | choix | oui | `flowchart`, `stateDiagram`, ou autre extension future. |
+| `type_diagramme` | choix | oui | `swimlane`, `flowchart`, `stateDiagram`, ou autre extension future. |
 | `code_mermaid` | texte long | oui | Code Mermaid généré. |
 | `date_generation` | date/heure | oui | Date de génération. |
 | `version` | texte | non | Version du modèle ou de la génération. |
@@ -121,15 +165,30 @@ La table `Generation_Mermaid` conserve les représentations Mermaid générées 
 ## Contraintes de cohérence
 
 - Un `Etat` appartient à un seul `Workflow`.
+- Une `Ligne_eau` appartient à un seul `Workflow`.
+- Une `Ligne_eau` appartient au pool d'un `Participant` du même workflow.
+- La ligne d'eau associée à un état doit appartenir au même workflow.
+- Un état peut rester sans ligne d'eau ; il est alors affiché dans le couloir
+  `Sans ligne d’eau`.
+- Un flux de séquence peut traverser plusieurs lignes d'eau d'un même pool, mais pas
+  la frontière du pool.
+- Un flux de message relie deux pools distincts et ne doit pas relier deux
+  nœuds du même pool.
 - Une `Transition` relie deux états du même `Workflow`.
 - Une `Transition` inactive ne doit pas être générée dans les diagrammes destinés aux utilisateurs.
 - Une `Regle` peut être attachée à un état, à une transition, ou aux deux.
 - Le champ `type_contenu` doit indiquer comment interpréter le champ `contenu` : Markdown, HTML ou texte brut.
 - Les identifiants utilisés dans Mermaid doivent éviter les espaces, accents et caractères spéciaux.
 - Un lien interne `page_phase` doit cibler `phases/<identifiant>.html`.
-- Un lien interne `page_etat` doit cibler `states/<identifiant>.html`.
+- La valeur historique `page_etat` reste admise par le schéma, mais sa
+  destination est signalée comme invalide par l'éditeur : le site ne génère
+  plus de page individuelle `states/*.html`.
 - Un lien de type `url` doit utiliser HTTP ou HTTPS.
 - `type_lien` et `cible_lien` doivent être renseignés ensemble.
+- Les liens structurés des états et transitions sont présentés avec leur
+  validité dans `etats.html` et `transitions.html`.
+- Une destination interne absente reste exportable mais est signalée comme
+  invalide et n'est pas rendue cliquable.
 
 ## Workflow directeur et phases
 
@@ -144,10 +203,28 @@ Le manifeste les désigne dans sa section `site` :
 {
   "site": {
     "overview_workflow_id": "Phases_projet_informatique",
-    "detail_workflow_id": "Projet_informatique"
+    "detail_workflow_id": "Projet_informatique",
+    "diagram": {
+      "node_spacing": 20,
+      "rank_spacing": 20,
+      "diagram_padding": 16,
+      "wrapping_width": 180,
+      "lane_title_wrap": 18,
+      "use_max_width": false
+    }
   }
 }
 ```
+
+`site.diagram` règle la mise en page Mermaid sans modifier les données métier.
+Les quatre premières dimensions sont exprimées en pixels. Pour un `flowchart`
+orienté `LR`, `rank_spacing` correspond à l'écart horizontal entre les étapes.
+Mermaid 11.17.2 accepte aussi ce réglage pour `swimlane-beta`, mais son moteur
+de placement ne le répercute pas encore sur la distance horizontale observée.
+`lane_title_wrap` est un nombre de caractères : un titre plus long est coupé
+une seule fois, au séparateur de mots le plus proche du milieu ; `0` désactive
+la coupure. `use_max_width: false` conserve la largeur naturelle calculée à
+partir du contenu et laisse le panneau proposer un défilement horizontal.
 
 Les états du workflow directeur utilisent `type_lien = page_phase`. Les états
 terminaux des diagrammes détaillés utilisent le même mécanisme pour conduire à

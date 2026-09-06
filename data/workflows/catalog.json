@@ -2,7 +2,17 @@
   "format": "workflow-site-catalog-v1",
   "title": "Catalogue des workflows",
   "description": "Choisissez le workflow à consulter.",
+  "theme": {
+    "pair": "aubergine",
+    "mode": "system"
+  },
   "workflows": [
+    {
+      "slug": "documentation",
+      "manifest": "documentation/manifest.json",
+      "label": "Documentation",
+      "description": "Guide visuel des éléments, formes, couleurs, liens, contenus, interactions et limites des workflows."
+    },
     {
       "slug": "projet-informatique",
       "manifest": "projet-informatique/manifest.json",

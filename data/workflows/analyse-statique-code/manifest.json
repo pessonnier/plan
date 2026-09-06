@@ -2,6 +2,10 @@
   "format": "workflow-data-manifest-v1",
   "schema": "../../../schema/workflow-model.json",
   "site": {
+    "theme": {
+      "pair": "ocean",
+      "mode": "dark"
+    },
     "overview_workflow_id": "Phases_analyse_statique",
     "detail_workflow_id": "Analyse_statique_code"
   },

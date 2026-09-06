@@ -45,7 +45,7 @@
         "scripts/html_rendering.py::state_card"
       ],
       "unit_tests": [
-        "tests/test_generate_workflow_html.py::GenerateWorkflowHtmlTests.test_single_page_contains_flowchart_then_phase_descriptions"
+        "tests/test_generate_workflow_html.py::GenerateWorkflowHtmlTests.test_single_page_contains_flowchart_then_state_texts"
       ],
       "functional_tests": [
         "tests/functional/test_cli_workflows.py::WorkflowCliFunctionalTests.test_html_page_cli_end_to_end"
@@ -56,11 +56,13 @@
       "specification": "docs/specifications.md",
       "code": [
         "scripts/generate_workflow_site.py::generate_site",
-        "scripts/generate_workflow_site.py::render_state_page",
-        "scripts/generate_workflow_site.py::render_phase_page"
+        "scripts/generate_workflow_site.py::render_phase_page",
+        "scripts/html_rendering.py::page_shell",
+        "scripts/html_rendering.py::site_javascript",
+        "scripts/workflow_data.py::theme_config_from_catalog"
       ],
       "unit_tests": [
-        "tests/test_generate_workflow_html.py::GenerateWorkflowHtmlTests.test_static_site_contains_navigation_and_all_state_pages",
+        "tests/test_generate_workflow_html.py::GenerateWorkflowHtmlTests.test_static_site_has_state_directory_without_individual_pages",
         "tests/test_generate_workflow_html.py::GenerateWorkflowHtmlTests.test_static_site_uses_file_compatible_mermaid_bootstrap"
       ],
       "functional_tests": [
@@ -73,12 +75,15 @@
       "code": [
         "scripts/generate_mermaid.py::generate_dataset_flowchart",
         "scripts/html_rendering.py::record_link_href",
+        "scripts/html_rendering.py::record_link_validation",
+        "scripts/generate_workflow_site.py::render_all_transitions_page",
         "scripts/validate_workflow_data.py::validate_business_consistency"
       ],
       "unit_tests": [
         "tests/test_validate_workflow_data.py::ValidateWorkflowDataTests.test_phase_overview_links_to_phase_pages",
         "tests/test_validate_workflow_data.py::ValidateWorkflowDataTests.test_invalid_internal_link_is_rejected",
-        "tests/test_generate_workflow_html.py::GenerateWorkflowHtmlTests.test_static_site_contains_navigation_and_all_state_pages"
+        "tests/test_validate_workflow_data.py::ValidateWorkflowDataTests.test_project_contains_markdown_and_link_validation_examples",
+        "tests/test_generate_workflow_html.py::GenerateWorkflowHtmlTests.test_static_site_has_state_directory_without_individual_pages"
       ],
       "functional_tests": [
         "tests/functional/test_cli_workflows.py::WorkflowCliFunctionalTests.test_static_site_cli_end_to_end"
@@ -115,6 +120,21 @@
       ]
     },
     {
+      "id": "REQ-EDITOR-001",
+      "specification": "docs/specifications.md",
+      "code": [
+        "scripts/generate_workflow_site.py::render_editor_page",
+        "scripts/html_rendering.py::workflow_editor_javascript"
+      ],
+      "unit_tests": [
+        "tests/test_generate_workflow_html.py::GenerateWorkflowHtmlTests.test_catalog_editor_embeds_workflows_and_editor_controls",
+        "tests/test_validate_workflow_data.py::ValidateWorkflowDataTests.test_project_contains_markdown_and_link_validation_examples"
+      ],
+      "functional_tests": [
+        "tests/functional/test_cli_workflows.py::WorkflowCliFunctionalTests.test_catalog_editor_cli_end_to_end"
+      ]
+    },
+    {
       "id": "REQ-TRACE-001",
       "specification": "docs/specifications.md",
       "code": [
@@ -127,6 +147,26 @@
       ],
       "functional_tests": [
         "tests/functional/test_cli_workflows.py::WorkflowCliFunctionalTests.test_traceability_cli"
+      ]
+    },
+    {
+      "id": "REQ-TUI-001",
+      "specification": "docs/specifications.md",
+      "code": [
+        "scripts/tui_core.py::create_workflow",
+        "scripts/tui_core.py::new_workflow_document",
+        "scripts/tui_core.py::generate_site",
+        "scripts/tui_core.py::save_site_theme",
+        "scripts/workflow_tui.py::launch_textual"
+      ],
+      "unit_tests": [
+        "tests/test_tui_core.py::TuiCoreTests.test_starter_workflow_is_complete_and_uses_mermaid_safe_ids",
+        "tests/test_tui_core.py::TuiCoreTests.test_create_workflow_registers_a_non_destructive_starter",
+        "tests/test_tui_core.py::TuiCoreTests.test_invalid_slug_is_rejected_before_writing",
+        "tests/test_tui_core.py::TuiCoreTests.test_web_themes_are_saved_independently_from_tui_settings"
+      ],
+      "functional_tests": [
+        "tests/functional/test_cli_workflows.py::WorkflowCliFunctionalTests.test_tui_headless_list_does_not_require_textual"
       ]
     }
   ]

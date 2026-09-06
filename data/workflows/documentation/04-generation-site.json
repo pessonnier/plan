@@ -1,0 +1,187 @@
+{
+  "Etat": [
+    {
+      "etat_id": "Choisir_portee_publication",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Actions_utilisateur",
+      "nom": "Choisir la portée de publication",
+      "description": "<p><strong>Moment :</strong> avant toute génération.</p><p><strong>Action utilisateur :</strong> sélectionner un workflow dans la page <em>Workflows</em> ou <em>Génération</em>, puis utiliser <code>G</code> ou le bouton de génération. Depuis <em>Thèmes des sites</em>, choisir l'accueil commun ou un workflow et sa paire clair/sombre.</p><p><strong>Outil :</strong> <code>scripts/workflow_tui.py</code> distingue un sous-site de la génération complète. La commande <code>scripts/generate_workflow_site.py</code> permet le même lancement hors TUI.</p><p><strong>Fichiers concernés :</strong> aucun fichier n'est encore écrit ; la sélection détermine le manifeste qui sera lu et le répertoire sous <code>build/site-workflows</code> qui sera remplacé.</p>",
+      "type_etat": "initial",
+      "ordre": 150,
+      "couleur": "#dbeafe"
+    },
+    {
+      "etat_id": "Modifier_sources",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Actions_utilisateur",
+      "nom": "Modifier uniquement les sources",
+      "description": "<p><strong>Moment :</strong> avant de lancer la génération ; ne pas modifier <code>build/site-workflows</code>, car son contenu sera écrasé.</p><p><strong>Action utilisateur :</strong> ouvrir depuis la TUI le manifeste ou un fichier de paramétrage dans l'éditeur choisi.</p><p><strong>Outils :</strong> la page <em>Workflows</em> ouvre <code>manifest.json</code> ou assemble le document complet ; la page <em>Paramétrages</em> ouvre les fragments. La page <em>Thèmes des sites</em> écrit la section <code>theme</code> du catalogue ou du manifeste.</p><p><strong>Fichiers modifiables :</strong> <code>data/workflows/catalog.json</code>, <code>data/workflows/&lt;slug&gt;/manifest.json</code>, les fragments JSON listés par <code>files</code>, la page de référence éventuelle comme <code>guide.json</code>, ainsi que les scripts et gabarits sous <code>scripts/</code> lorsqu'on fait évoluer le générateur.</p>",
+      "type_etat": "normal",
+      "ordre": 160,
+      "couleur": "#bfdbfe"
+    },
+    {
+      "etat_id": "Enregistrer_reglages",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Console_exploitation",
+      "nom": "Enregistrer les réglages",
+      "description": "<p><strong>Déclencheur utilisateur :</strong> cliquer sur <em>Enregistrer pour ce site</em> ou <em>Enregistrer et régénérer…</em>.</p><p><strong>Outil :</strong> <code>tui_core.save_site_theme</code> écrit la paire de couleurs et le mode initial. Le second bouton enchaîne automatiquement l'enregistrement et la génération.</p><p><strong>Entrées et sorties :</strong> pour l'accueil, lecture puis mise à jour de <code>data/workflows/catalog.json</code> ; pour un workflow, lecture puis mise à jour de <code>data/workflows/&lt;slug&gt;/manifest.json</code>. Les préférences propres à la TUI restent séparées dans <code>build/.workflow-tui.json</code>.</p>",
+      "type_etat": "normal",
+      "ordre": 170,
+      "couleur": "#dcfce7"
+    },
+    {
+      "etat_id": "Lancer_generation",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Console_exploitation",
+      "nom": "Lancer l'opération choisie",
+      "description": "<p><strong>Déclencheur utilisateur :</strong> <code>G</code>, <em>Générer ce workflow</em>, <em>Générer tous les sites</em> ou la commande Python.</p><p><strong>Outil :</strong> <code>tui_core.generate_workflow_site</code> lance un seul manifeste ; <code>tui_core.generate_site</code> lance le catalogue complet. Tous deux exécutent <code>scripts/generate_workflow_site.py</code> et affichent le code retour, le nombre de fichiers écrits et le point d'entrée.</p><p><strong>Cas distinct :</strong> <em>Exporter le diagramme Mermaid (.md)</em> appelle <code>scripts/generate_mermaid.py</code> et produit seulement <code>build/mermaid/&lt;slug&gt;.md</code> ; aucune page HTML n'est créée.</p>",
+      "type_etat": "normal",
+      "ordre": 180,
+      "couleur": "#bbf7d0"
+    },
+    {
+      "etat_id": "Lire_fusionner_valider",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Moteur_generation",
+      "nom": "Lire, fusionner et valider",
+      "description": "<p><strong>Outils :</strong> <code>workflow_data.load_catalog</code> lit <code>catalog.json</code> ; <code>workflow_data.load_manifest</code> lit le manifeste puis tous les fragments déclarés dans <code>files</code> et fusionne leurs tables. <code>validate_workflow_data.validate_source</code> lit le schéma indiqué par <code>schema</code> et contrôle structure, références et cohérence métier.</p><p><strong>Déclencheur utilisateur :</strong> aucun clic supplémentaire ; cette étape démarre automatiquement après la demande de génération.</p><p><strong>Effet :</strong> en cas d'erreur, la génération s'arrête avant publication et la TUI affiche l'échec. En cas de succès, le document fusionné exact est écrit dans <code>build/site-workflows/sources/&lt;slug&gt;.json</code> pour être consultable.</p>",
+      "type_etat": "validation",
+      "ordre": 190,
+      "couleur": "#fef3c7"
+    },
+    {
+      "etat_id": "Construire_pages_assets",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Moteur_generation",
+      "nom": "Construire les pages et les ressources",
+      "description": "<p><strong>Outils :</strong> <code>generate_workflow_site.py</code> orchestre la production ; <code>generate_mermaid.py</code> transforme les états et transitions en source Mermaid ; <code>html_rendering.py</code> échappe les données, filtre le HTML autorisé et rend les gabarits, styles et scripts.</p><p><strong>Fichiers lus :</strong> document fusionné validé, configuration <code>site</code> du manifeste, thème, paramètres de diagramme, éventuel <code>guide.json</code>, <code>scripts/vendor/mermaid.min.js</code> et sa licence.</p><p><strong>Déclencheur utilisateur :</strong> aucun ; l'étape suit automatiquement la validation.</p>",
+      "type_etat": "normal",
+      "ordre": 200,
+      "couleur": "#fde68a"
+    },
+    {
+      "etat_id": "Ecrire_site_statique",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Fichiers_produits",
+      "nom": "Écrire le site statique",
+      "description": "<p><strong>Outil :</strong> <code>generate_catalog_site</code> écrit l'accueil commun <code>index.html</code>, <code>editor.html</code>, <code>settings.html</code>, <code>assets/</code> et <code>sources/*.json</code>. Pour chaque manifeste, <code>generate_single_site</code> écrit <code>&lt;slug&gt;/index.html</code>, <code>etats.html</code>, <code>transitions.html</code>, <code>settings.html</code>, <code>phases/*.html</code>, l'éventuel <code>guide.html</code> et les ressources locales.</p><p><strong>Moment :</strong> pendant cette étape, tous les fichiers sous la sortie ciblée sont des produits ; ils ne doivent pas être corrigés manuellement. Toute correction durable se fait dans les sources, puis par une nouvelle génération.</p><p><strong>Déclencheur utilisateur :</strong> aucun ; l'écriture découle de la portée choisie au départ.</p>",
+      "type_etat": "normal",
+      "ordre": 210,
+      "couleur": "#fce7f3"
+    },
+    {
+      "etat_id": "Controler_resultat",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Fichiers_produits",
+      "nom": "Contrôler et ouvrir le résultat",
+      "description": "<p><strong>Action utilisateur :</strong> lire le bilan dans la page <em>Génération</em>, utiliser <em>Ouvrir le résultat</em>, parcourir le site et vérifier navigation, thème clair/sombre et diagrammes.</p><p><strong>Outils :</strong> la TUI compare les fichiers avant/après pour compter les écritures et ouvre le point d'entrée ; le navigateur exécute <code>assets/app.js</code> et Mermaid local. Les tests Python contrôlent structure, liens et génération hors ligne.</p><p><strong>Moment :</strong> après génération, les fichiers de <code>build/site-workflows</code> peuvent être consultés ou déployés, mais restent des artefacts reproductibles et non des sources à maintenir.</p>",
+      "type_etat": "validation",
+      "ordre": 220,
+      "couleur": "#fbcfe8"
+    },
+    {
+      "etat_id": "Evaluer_processus",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Actions_utilisateur",
+      "nom": "Évaluer le processus actuel",
+      "description": "<p><strong>Jugement après visualisation :</strong> le processus est pratique pour une exploitation locale : une seule TUI centralise sélection, thème, validation, génération et ouverture ; le site est autonome hors ligne et les erreurs bloquent avant publication. Les fiches textuelles de cette phase rendent les responsabilités et les fichiers compréhensibles.</p><p><strong>Limites d'efficacité :</strong> le diagramme horizontal de dix étapes dépasse largement la largeur d'un écran et impose un long défilement, donc il donne moins vite la vue d'ensemble que les fiches. La séparation entre manifeste, fragments et document fusionné demande aussi un apprentissage ; le JSON complet exporté ne se réinjecte pas automatiquement dans les fragments ; le catalogue complet régénère davantage de fichiers que nécessaire ; Firefox ne fournit pas de sélecteur d'emplacement au site statique ; enfin, le résultat ne propose pas encore de comparaison visuelle avant/après.</p><p><strong>Action utilisateur :</strong> comparer le bilan, le document source affiché dans l'éditeur web et les pages produites avant d'accepter la publication.</p>",
+      "type_etat": "normal",
+      "ordre": 230,
+      "couleur": "#ddd6fe"
+    },
+    {
+      "etat_id": "Proposer_evolutions",
+      "workflow_id": "Documentation_workflows",
+      "ligne_eau_id": "Actions_utilisateur",
+      "nom": "Faire évoluer la chaîne",
+      "description": "<p><strong>Évolutions proposées, par priorité :</strong></p><ol><li>offrir à cette phase une vue verticale dédiée, ou replier les couloirs, afin que les dix étapes restent lisibles sans défilement horizontal massif ;</li><li>ajouter dans la TUI un import contrôlé du document fusionné avec aperçu des différences et redistribution explicite vers les fragments ;</li><li>calculer un graphe de dépendances pour ne régénérer que les pages affectées et signaler les sources plus récentes que le site ;</li><li>ajouter une prévisualisation locale avec comparaison avant/après, contrôle des liens et retour arrière ;</li><li>fournir à Firefox un parcours assumé <em>Télécharger puis importer dans la TUI</em>, puisqu'un site statique ne peut pas choisir son dossier ;</li><li>proposer un mode surveillance qui régénère automatiquement après validation d'un fichier source.</li></ol><p><strong>Déclencheur utilisateur futur :</strong> accepter un aperçu de modifications dans la TUI avant toute écriture sur les sources ou publication.</p>",
+      "type_etat": "final",
+      "ordre": 240,
+      "couleur": "#c4b5fd"
+    }
+  ],
+  "Transition": [
+    {
+      "transition_id": "Passer_a_publication",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Hors_ligne",
+      "etat_cible_id": "Choisir_portee_publication",
+      "libelle": "préparer une publication",
+      "type_flux_bpmn": "message",
+      "actif": true
+    },
+    {
+      "transition_id": "Preparer_sources_publication",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Choisir_portee_publication",
+      "etat_cible_id": "Modifier_sources",
+      "libelle": "identifier les entrées",
+      "actif": true
+    },
+    {
+      "transition_id": "Sauvegarder_configuration",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Modifier_sources",
+      "etat_cible_id": "Enregistrer_reglages",
+      "libelle": "valider les choix",
+      "actif": true
+    },
+    {
+      "transition_id": "Declencher_generation_site",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Enregistrer_reglages",
+      "etat_cible_id": "Lancer_generation",
+      "libelle": "demander la génération",
+      "actif": true
+    },
+    {
+      "transition_id": "Charger_sources_site",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Lancer_generation",
+      "etat_cible_id": "Lire_fusionner_valider",
+      "libelle": "lancer les contrôles",
+      "actif": true
+    },
+    {
+      "transition_id": "Rendre_site",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Lire_fusionner_valider",
+      "etat_cible_id": "Construire_pages_assets",
+      "libelle": "document valide",
+      "actif": true
+    },
+    {
+      "transition_id": "Publier_fichiers_site",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Construire_pages_assets",
+      "etat_cible_id": "Ecrire_site_statique",
+      "libelle": "rendu calculé",
+      "actif": true
+    },
+    {
+      "transition_id": "Verifier_publication",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Ecrire_site_statique",
+      "etat_cible_id": "Controler_resultat",
+      "libelle": "fichiers écrits",
+      "actif": true
+    },
+    {
+      "transition_id": "Analyser_ergonomie",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Controler_resultat",
+      "etat_cible_id": "Evaluer_processus",
+      "libelle": "parcours vérifié",
+      "actif": true
+    },
+    {
+      "transition_id": "Prioriser_ameliorations",
+      "workflow_id": "Documentation_workflows",
+      "etat_source_id": "Evaluer_processus",
+      "etat_cible_id": "Proposer_evolutions",
+      "libelle": "limites identifiées",
+      "actif": true
+    }
+  ]
+}

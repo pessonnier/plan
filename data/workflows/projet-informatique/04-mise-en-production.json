@@ -3,6 +3,7 @@
     {
       "etat_id": "Dossier_MEP",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Responsable_conduite_projet",
       "nom": "Dossier de mise en production",
       "description": "<p>Le plan de changement décrit les opérations, responsabilités, contrôles, communications, sauvegardes et retour arrière.</p>",
       "type_etat": "normal",
@@ -13,6 +14,7 @@
     {
       "etat_id": "CAB_valide",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "CAB_changements",
       "nom": "Changement autorisé",
       "description": "<p>Le comité des changements a évalué les risques, dépendances, indisponibilités et moyens de retour arrière.</p>",
       "type_etat": "validation",
@@ -23,6 +25,7 @@
     {
       "etat_id": "Preproduction",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Exploitation_operations",
       "nom": "Validation en préproduction",
       "description": "<p>Le déploiement, les migrations, la supervision et le retour arrière sont répétés dans un environnement représentatif.</p>",
       "type_etat": "validation",
@@ -33,6 +36,7 @@
     {
       "etat_id": "MEP",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Exploitation_operations",
       "nom": "Mise en production",
       "description": "<p>Le changement autorisé est exécuté sous contrôle avec journalisation des étapes et décision explicite de poursuite ou de repli.</p>",
       "type_etat": "normal",
@@ -43,6 +47,7 @@
     {
       "etat_id": "MEP_a_reprendre",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Exploitation_operations",
       "nom": "Mise en production à reprendre",
       "description": "<p>Le changement a été interrompu ou annulé après échec d'un contrôle, activation du retour arrière ou incident majeur.</p>",
       "type_etat": "blocage",
@@ -53,6 +58,7 @@
     {
       "etat_id": "Service_actif",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Exploitation_operations",
       "nom": "Service actif",
       "description": "<p>Le service est ouvert aux utilisateurs, supervisé, documenté et transféré aux équipes de support et d'exploitation.</p>",
       "type_etat": "validation",

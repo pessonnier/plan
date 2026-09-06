@@ -3,6 +3,7 @@
     {
       "etat_id": "Specifications",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Responsable_conduite_projet",
       "nom": "Spécifications en cours",
       "description": "<p>Les exigences fonctionnelles, non fonctionnelles, réglementaires et d'exploitabilité sont décrites et priorisées.</p>",
       "type_etat": "normal",
@@ -13,6 +14,7 @@
     {
       "etat_id": "Specifications_validees",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Metiers_validation",
       "nom": "Spécifications validées",
       "description": "<p>Le métier, la sécurité, l'exploitation et les contributeurs techniques ont approuvé la référence des exigences.</p>",
       "type_etat": "validation",
@@ -23,6 +25,7 @@
     {
       "etat_id": "Architecture_concue",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Architecture_securite",
       "nom": "Architecture conçue",
       "description": "<p>L'architecture applicative, technique, données et intégration est documentée avec ses décisions structurantes.</p>",
       "type_etat": "normal",
@@ -33,6 +36,7 @@
     {
       "etat_id": "Architecture_validee",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Architecture_securite",
       "nom": "Architecture validée",
       "description": "<p>Les revues d'architecture, de sécurité et de protection des données ont levé les réserves bloquantes.</p>",
       "type_etat": "validation",
@@ -43,6 +47,7 @@
     {
       "etat_id": "Dossier_marche",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Achats_contractualisation",
       "nom": "Marché en préparation",
       "description": "<p>Le besoin, les critères de sélection, les clauses de sécurité, les niveaux de service et les livrables contractuels sont préparés.</p>",
       "type_etat": "normal",
@@ -53,6 +58,7 @@
     {
       "etat_id": "Marche_attribue",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Achats_contractualisation",
       "nom": "Marché attribué",
       "description": "<p>La consultation est achevée, le fournisseur est retenu et les engagements contractuels sont exécutoires.</p>",
       "type_etat": "validation",

@@ -4,15 +4,46 @@
       "workflow_id": "Suivi_dossier",
       "nom": "Suivi d'un dossier",
       "description": "Exemple de cycle de traitement d'un dossier.",
-      "type_diagramme": "flowchart",
+      "type_diagramme": "swimlane",
       "orientation": "TD",
       "actif": true
+    }
+  ],
+  "Participant": [
+    {
+      "participant_id": "Organisme_gestionnaire",
+      "workflow_id": "Suivi_dossier",
+      "nom": "Organisme gestionnaire",
+      "description": "Pool interne qui exécute le processus de traitement du dossier.",
+      "processus_visible": true,
+      "ordre": 10
+    }
+  ],
+  "Ligne_eau": [
+    {
+      "ligne_eau_id": "Agent_instructeur",
+      "workflow_id": "Suivi_dossier",
+      "participant_id": "Organisme_gestionnaire",
+      "nom": "Agent instructeur",
+      "description": "Rôle responsable de qualifier, instruire et faire corriger le dossier.",
+      "type_partition": "role",
+      "ordre": 10
+    },
+    {
+      "ligne_eau_id": "Autorite_validation",
+      "workflow_id": "Suivi_dossier",
+      "participant_id": "Organisme_gestionnaire",
+      "nom": "Autorité de validation",
+      "description": "Rôle responsable de valider puis de clôturer le dossier.",
+      "type_partition": "role",
+      "ordre": 20
     }
   ],
   "Etat": [
     {
       "etat_id": "A_qualifier",
       "workflow_id": "Suivi_dossier",
+      "ligne_eau_id": "Agent_instructeur",
       "nom": "À qualifier",
       "type_etat": "initial",
       "ordre": 10
@@ -20,6 +51,7 @@
     {
       "etat_id": "En_instruction",
       "workflow_id": "Suivi_dossier",
+      "ligne_eau_id": "Agent_instructeur",
       "nom": "En instruction",
       "type_etat": "normal",
       "ordre": 20
@@ -27,6 +59,7 @@
     {
       "etat_id": "A_valider",
       "workflow_id": "Suivi_dossier",
+      "ligne_eau_id": "Autorite_validation",
       "nom": "À valider",
       "type_etat": "validation",
       "ordre": 30
@@ -34,6 +67,7 @@
     {
       "etat_id": "En_correction",
       "workflow_id": "Suivi_dossier",
+      "ligne_eau_id": "Agent_instructeur",
       "nom": "En correction",
       "type_etat": "blocage",
       "ordre": 40
@@ -41,6 +75,7 @@
     {
       "etat_id": "Clos",
       "workflow_id": "Suivi_dossier",
+      "ligne_eau_id": "Autorite_validation",
       "nom": "Clos",
       "type_etat": "final",
       "ordre": 50

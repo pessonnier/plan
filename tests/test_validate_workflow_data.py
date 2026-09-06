@@ -47,10 +47,29 @@ class ValidateWorkflowDataTests(unittest.TestCase):
         document = validate_workflow_data.validate_source(MANIFEST)
 
         self.assertEqual(2, len(document["Workflow"]))
+        self.assertEqual(1, len(document["Participant"]))
+        self.assertEqual(13, len(document["Ligne_eau"]))
+        self.assertEqual(
+            {role["role_id"] for role in document["Role"]},
+            {waterline["role_id"] for waterline in document["Ligne_eau"]},
+        )
         self.assertGreaterEqual(len(document["Etat"]), 30)
         self.assertGreaterEqual(len(document["Transition"]), 30)
         self.assertGreaterEqual(len(document["Regle"]), 8)
         state_ids = {state["etat_id"] for state in document["Etat"]}
+        state_waterlines = {
+            state["etat_id"]: state.get("ligne_eau_id")
+            for state in document["Etat"]
+            if state["workflow_id"] == "Projet_informatique"
+        }
+        self.assertEqual(
+            {
+                waterline["ligne_eau_id"]
+                for waterline in document["Ligne_eau"]
+                if waterline["workflow_id"] == "Projet_informatique"
+            },
+            set(state_waterlines.values()),
+        )
         self.assertTrue(
             {
                 "Budget_valide",
@@ -62,6 +81,41 @@ class ValidateWorkflowDataTests(unittest.TestCase):
                 "Maintenance",
                 "Decommissionne",
             }.issubset(state_ids)
+        )
+        self.assertEqual(
+            {
+                "Idee_projet": "Sponsor_metiers",
+                "Cadrage": "Responsable_conduite_projet",
+                "Budget_valide": "Pilotage_gouvernance",
+                "Architecture_concue": "Architecture_securite",
+                "Dossier_marche": "Achats_contractualisation",
+                "Realisation": "Realisation_qualite",
+                "Tests_integration": "Qualite_tests",
+                "Recette_metier": "Metiers_validation",
+                "Homologation_securite": "Securite_homologation",
+                "CAB_valide": "CAB_changements",
+                "Service_actif": "Exploitation_operations",
+                "Maintenance": "Maintenance_service",
+                "Donnees_archivees": "DPO_donnees",
+            },
+            {
+                state_id: state_waterlines[state_id]
+                for state_id in (
+                    "Idee_projet",
+                    "Cadrage",
+                    "Budget_valide",
+                    "Architecture_concue",
+                    "Dossier_marche",
+                    "Realisation",
+                    "Tests_integration",
+                    "Recette_metier",
+                    "Homologation_securite",
+                    "CAB_valide",
+                    "Service_actif",
+                    "Maintenance",
+                    "Donnees_archivees",
+                )
+            },
         )
 
     def test_all_project_states_are_reachable_from_initial_state(self):
@@ -101,6 +155,54 @@ class ValidateWorkflowDataTests(unittest.TestCase):
             with self.subTest(state=state["etat_id"]):
                 self.assertTrue(state["description"].startswith("<p>"))
                 self.assertTrue(state["description"].endswith("</p>"))
+
+    def test_project_contains_markdown_and_link_validation_examples(self):
+        document = validate_workflow_data.validate_source(MANIFEST)
+        initial_state = next(
+            state for state in document["Etat"]
+            if state["etat_id"] == "Idee_projet"
+        )
+
+        self.assertEqual("markdown", initial_state["type_contenu"])
+        self.assertIn(
+            "[documentation valide](https://example.org/guide-projet)",
+            initial_state["contenu"],
+        )
+        self.assertIn(
+            "[état destinataire supprimé](states/Etat_supprime.html)",
+            initial_state["contenu"],
+        )
+        self.assertEqual("url", initial_state["type_lien"])
+        self.assertEqual(
+            "https://example.org/projet-informatique",
+            initial_state["cible_lien"],
+        )
+        invalid_state = next(
+            state for state in document["Etat"]
+            if state["etat_id"] == "Budget_a_revoir"
+        )
+        self.assertEqual("page_etat", invalid_state["type_lien"])
+        self.assertEqual(
+            "states/Etat_budget_supprime.html",
+            invalid_state["cible_lien"],
+        )
+        transitions = {
+            transition["transition_id"]: transition
+            for transition in document["Transition"]
+            if transition["workflow_id"] == "Projet_informatique"
+        }
+        self.assertEqual(
+            "https://example.org/projet-informatique/opportunite",
+            transitions["Enregistrer_opportunite"]["cible_lien"],
+        )
+        self.assertEqual(
+            "phases/02-specifications-conception-marche.html",
+            transitions["Valider_budget"]["cible_lien"],
+        )
+        self.assertEqual(
+            "states/Transition_budget_supprimee.html",
+            transitions["Refuser_budget"]["cible_lien"],
+        )
 
     def test_fragmented_dataset_can_generate_complete_diagrams(self):
         document = workflow_data.load_data_source(MANIFEST)
@@ -268,6 +370,59 @@ class ValidateWorkflowDataTests(unittest.TestCase):
         with self.assertRaisesRegex(
             validate_workflow_data.DataValidationError,
             "relie des états appartenant à un autre workflow",
+        ):
+            validate_workflow_data.validate_business_consistency(invalid)
+
+    def test_state_waterline_must_belong_to_same_workflow(self):
+        document = workflow_data.load_data_source(MANIFEST)
+        invalid = copy.deepcopy(document)
+        invalid["Participant"].append(
+            {
+                "participant_id": "Participant_autre_workflow",
+                "workflow_id": "Phases_projet_informatique",
+                "nom": "Autre participant",
+                "processus_visible": True,
+                "ordre": 99,
+            }
+        )
+        invalid["Ligne_eau"].append(
+            {
+                "ligne_eau_id": "Ligne_autre_workflow",
+                "workflow_id": "Phases_projet_informatique",
+                "participant_id": "Participant_autre_workflow",
+                "nom": "Autre workflow",
+                "type_partition": "role",
+                "ordre": 99,
+            }
+        )
+        state = next(
+            state
+            for state in invalid["Etat"]
+            if state["workflow_id"] == "Projet_informatique"
+        )
+        state["ligne_eau_id"] = "Ligne_autre_workflow"
+        schema = workflow_data.load_json(SCHEMA)
+
+        validate_workflow_data.validate_references(invalid, schema)
+        with self.assertRaisesRegex(
+            validate_workflow_data.DataValidationError,
+            "ligne_eau_id appartient à un autre workflow",
+        ):
+            validate_workflow_data.validate_business_consistency(invalid)
+
+    def test_message_flow_inside_same_pool_is_rejected(self):
+        document = workflow_data.load_data_source(MANIFEST)
+        invalid = copy.deepcopy(document)
+        transition = next(
+            transition
+            for transition in invalid["Transition"]
+            if transition["workflow_id"] == "Projet_informatique"
+        )
+        transition["type_flux_bpmn"] = "message"
+
+        with self.assertRaisesRegex(
+            validate_workflow_data.DataValidationError,
+            "flux de message à l'intérieur d'un même pool",
         ):
             validate_workflow_data.validate_business_consistency(invalid)
 

@@ -2,8 +2,20 @@
   "format": "workflow-data-manifest-v1",
   "schema": "../../../schema/workflow-model.json",
   "site": {
+    "theme": {
+      "pair": "forest",
+      "mode": "light"
+    },
     "overview_workflow_id": "Phases_projet_informatique",
-    "detail_workflow_id": "Projet_informatique"
+    "detail_workflow_id": "Projet_informatique",
+    "diagram": {
+      "node_spacing": 20,
+      "rank_spacing": 20,
+      "diagram_padding": 16,
+      "wrapping_width": 180,
+      "lane_title_wrap": 18,
+      "use_max_width": false
+    }
   },
   "files": [
     "00-referentiel.json",

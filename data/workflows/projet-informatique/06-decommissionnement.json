@@ -3,6 +3,7 @@
     {
       "etat_id": "Decommission_planifie",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Responsable_conduite_projet",
       "nom": "Décommissionnement planifié",
       "description": "<p>Le plan organise la migration des utilisateurs, l'arrêt des flux, la conservation des preuves, la communication et la réversibilité.</p>",
       "type_etat": "normal",
@@ -13,6 +14,7 @@
     {
       "etat_id": "Donnees_archivees",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "DPO_donnees",
       "nom": "Données traitées",
       "description": "<p>Les données sont migrées, archivées ou supprimées selon leur finalité, les durées légales et les décisions de conservation.</p>",
       "type_etat": "validation",
@@ -23,6 +25,7 @@
     {
       "etat_id": "Services_arretes",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Exploitation_operations",
       "nom": "Services arrêtés",
       "description": "<p>Les accès utilisateurs, traitements, interfaces, tâches planifiées et flux réseau sont arrêtés de manière contrôlée.</p>",
       "type_etat": "normal",
@@ -33,6 +36,7 @@
     {
       "etat_id": "Actifs_retires",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Exploitation_operations",
       "nom": "Actifs retirés",
       "description": "<p>Les infrastructures, comptes techniques, certificats, licences, contrats, secrets et éléments de supervision sont retirés.</p>",
       "type_etat": "validation",
@@ -43,6 +47,7 @@
     {
       "etat_id": "Decommissionne",
       "workflow_id": "Projet_informatique",
+      "ligne_eau_id": "Sponsor_metiers",
       "nom": "Projet décommissionné",
       "description": "<p>Le service est définitivement fermé, les obligations résiduelles sont attribuées et la preuve de clôture est archivée.</p>",
       "type_etat": "final",
